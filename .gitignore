@@ -79,3 +79,12 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+# Python / Jupyter analysis
+analysis/.venv/
+analysis/.deps/
+analysis/notebooks/.ipynb_checkpoints/
+**/__pycache__/
+
+# Robot pose logs
+/logs/*.csv
+!/logs/.gitkeep
