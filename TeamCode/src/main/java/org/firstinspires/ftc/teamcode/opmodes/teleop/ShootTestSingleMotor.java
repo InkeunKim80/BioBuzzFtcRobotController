@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
 import dev.nextftc.robot.triggers.CommandGamepad;
 
-@NextTeleop(name="Shoot Test Single Motor", group = "Tests")
+@NextTeleop(name = "Shoot Test Single Motor", group = "Tests")
 public class ShootTestSingleMotor extends NextOpMode {
     private final Robot robot;
 
@@ -39,7 +40,8 @@ public class ShootTestSingleMotor extends NextOpMode {
         telemetry.addData("Shooter RPM", robot.shooter.getRPM());
         telemetry.addData("Shooter Power", robot.shooter.getPower());
         telemetry.addData("Gate Position", robot.shooter.getGatePosition());
-        telemetry.addData("Gate Status", robot.shooter.getState() == robot.shooter.ShooterState.FORWARD ? "OPEN" : "CLOSED");
+        telemetry.addData("Gate Status",
+                robot.shooter.getState() == Shooter.ShooterState.FORWARD ? "OPEN" : "CLOSED");
         telemetry.update();
     }
 }

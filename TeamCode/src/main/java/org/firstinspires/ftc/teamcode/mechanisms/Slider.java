@@ -9,10 +9,6 @@ import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.Mechanism;
 
 public class Slider implements Mechanism {
-    private final NextMotor sliderMotor = new NextMotor(
-            "sliderMotor",
-            Degrees.of(360.0 / 28.0)
-    );
 
     private double targetPosition = 0;
     private boolean usePositionControl = false;
@@ -27,6 +23,13 @@ public class Slider implements Mechanism {
     private static final double POSITION_TOLERANCE = 10.0;
     private static final double MAX_POWER = 1.0;
     private static final double MIN_POWER = -1.0;
+
+    private static final double DEGREES_PER_TICK = 360.0 / 28.0;
+
+    private final NextMotor sliderMotor = new NextMotor(
+            "sliderMotor",
+            Degrees.of(360.0 / 28.0)
+    );
 
     public Slider() {
         sliderMotor.setDirection(NextMotor.Direction.FORWARD);
@@ -54,7 +57,7 @@ public class Slider implements Mechanism {
     }
 
     public double getCurrentPosition() {
-        return sliderMotor.getCurrentPosition();
+        return sliderMotor.getEncoderPosition().into(Degrees) / DEGREES_PER_TICK;
     }
 
     public double getTargetPosition() {

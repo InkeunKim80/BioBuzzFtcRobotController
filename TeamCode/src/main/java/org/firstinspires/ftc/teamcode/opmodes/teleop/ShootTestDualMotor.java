@@ -5,15 +5,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.mechanisms.ShooterDual;
 
+import java.util.Collections;
+
 import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
 import dev.nextftc.robot.triggers.CommandGamepad;
 
-@NextTeleop(name="Shoot Test Dual Motor", group = "Tests")
+@NextTeleop(name = "Shoot Test Dual Motor", group = "Tests")
 public class ShootTestDualMotor extends NextOpMode {
     private final ShooterDual shooterDual;
 
     public ShootTestDualMotor() {
+        super(Collections.emptyList());
         this.shooterDual = new ShooterDual();
         Scheduler.reset();
     }
@@ -39,7 +42,8 @@ public class ShootTestDualMotor extends NextOpMode {
         telemetry.addData("Shooter Motor 1 Power", shooterDual.getPower1());
         telemetry.addData("Shooter Motor 2 Power", shooterDual.getPower2());
         telemetry.addData("Gate Position", shooterDual.getGatePosition());
-        telemetry.addData("Gate Status", shooterDual.getState() == ShooterDual.ShooterState.FORWARD ? "OPEN" : "CLOSED");
+        telemetry.addData("Gate Status",
+                shooterDual.getState() == ShooterDual.ShooterState.FORWARD ? "OPEN" : "CLOSED");
         telemetry.update();
     }
 }
