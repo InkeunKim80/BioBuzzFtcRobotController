@@ -5,10 +5,13 @@
             <GoBILDA5202SeriesMotor name="intakeMotor" port="0"/>
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
-            <goBILDA5202SeriesMotor name="backRight" port="0"/>
+            <!-- <goBILDA5202SeriesMotor name="backRight" port="0"/>
             <goBILDA5202SeriesMotor name="backLeft" port="1"/>
             <goBILDA5202SeriesMotor name="frontRight" port="2"/>
-            <goBILDA5202SeriesMotor name="frontLeft" port="3"/>
+            <goBILDA5202SeriesMotor name="frontLeft" port="3"/> -->
+            <goBILDA5202SeriesMotor name="shootMotor1" port="0"/>
+            <goBILDA5202SeriesMotor name="shootMotor2" port="1"/>
+            <Servo name="gateServo" port="0"/>
             <ControlHubImuBHI260AP name="imu" port="0" bus="0"/>
             <goBILDAPinpoint name="pinpoint" port="0" bus="1"/>
         </LynxModule>
