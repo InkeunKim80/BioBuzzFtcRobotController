@@ -10,8 +10,8 @@ import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.Mechanism;
 
 public class Shooter implements Mechanism {
-    private final NextMotor shootMotor = new NextMotor(
-            "shootMotor",
+    private final NextMotor shootMotor1 = new NextMotor(
+            "shootMotor1",
             Degrees.of(360.0 / 28.0)
     );
     private Servo gateServo;
@@ -31,7 +31,7 @@ public class Shooter implements Mechanism {
     private static final double GATE_CLOSED = 0.0;
 
     public Shooter() {
-        shootMotor.setDirection(NextMotor.Direction.REVERSE);
+        shootMotor1.setDirection(NextMotor.Direction.REVERSE);
     }
 
     public void setGateServo(Servo servo) {
@@ -78,11 +78,11 @@ public class Shooter implements Mechanism {
     }
 
     public double getRPM(){
-        return shootMotor.getEncoderVelocity().into(RotationsPerMinute);
+        return shootMotor1.getEncoderVelocity().into(RotationsPerMinute);
     }
 
     public double getPower(){
-        return shootMotor.getThrottle();
+        return shootMotor1.getThrottle();
     }
 
     public double getGatePosition() {
@@ -103,13 +103,13 @@ public class Shooter implements Mechanism {
     public void periodic() {
         switch (shooterState) {
             case FORWARD:
-                shootMotor.setThrottle(FORWARD_POWER);
+                shootMotor1.setThrottle(FORWARD_POWER);
                 break;
             case REVERSE:
-                shootMotor.setThrottle(REVERSE_POWER);
+                shootMotor1.setThrottle(REVERSE_POWER);
                 break;
             case OFF:
-                shootMotor.setThrottle(OFF_POWER);
+                shootMotor1.setThrottle(OFF_POWER);
                 break;
         }
     }

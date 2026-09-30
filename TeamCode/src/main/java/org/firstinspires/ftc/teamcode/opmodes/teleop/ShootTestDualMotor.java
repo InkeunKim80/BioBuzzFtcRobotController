@@ -4,8 +4,7 @@ import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.mechanisms.ShooterDual;
-
-import java.util.Collections;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
@@ -13,10 +12,12 @@ import dev.nextftc.robot.triggers.CommandGamepad;
 
 @NextTeleop(name = "Shoot Test Dual Motor", group = "Tests")
 public class ShootTestDualMotor extends NextOpMode {
+    private final Robot robot;
     private final ShooterDual shooterDual;
 
-    public ShootTestDualMotor() {
-        super(Collections.emptyList());
+    public ShootTestDualMotor(Robot robot) {
+        super(robot);
+        this.robot = robot;
         this.shooterDual = new ShooterDual();
         Scheduler.reset();
     }
@@ -36,6 +37,7 @@ public class ShootTestDualMotor extends NextOpMode {
 
     @Override
     public void periodic() {
+        shooterDual.periodic();
         telemetry.addData("Shooter State", shooterDual.getState());
         telemetry.addData("Shooter Motor 1 RPM", shooterDual.getRPM1());
         telemetry.addData("Shooter Motor 2 RPM", shooterDual.getRPM2());
