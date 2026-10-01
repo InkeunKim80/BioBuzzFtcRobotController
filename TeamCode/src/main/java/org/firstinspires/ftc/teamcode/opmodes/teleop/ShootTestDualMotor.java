@@ -33,6 +33,9 @@ public class ShootTestDualMotor extends NextOpMode {
         gp2.b().onTrue(shooterDual.off());
         gp2.x().onTrue(shooterDual.reverse());
         gp2.y().onTrue(shooterDual.cycle());
+
+        gp2.leftBumper().onTrue(shooterDual.decreasePower());
+        gp2.rightBumper().onTrue(shooterDual.increasePower());
     }
 
     @Override
@@ -43,6 +46,7 @@ public class ShootTestDualMotor extends NextOpMode {
         telemetry.addData("Shooter Motor 2 RPM", shooterDual.getRPM2());
         telemetry.addData("Shooter Motor 1 Power", shooterDual.getPower1());
         telemetry.addData("Shooter Motor 2 Power", shooterDual.getPower2());
+        telemetry.addData("Power Multiplier", String.format("%.1f", shooterDual.getPowerMultiplier()));
         telemetry.addData("Gate Position", shooterDual.getGatePosition());
         telemetry.addData("Gate Status",
                 shooterDual.getState() == ShooterDual.ShooterState.FORWARD ? "OPEN" : "CLOSED");

@@ -16,6 +16,7 @@ public class Shooter implements Mechanism {
     );
     private Servo gateServo;
     private ShooterState shooterState = ShooterState.OFF;
+    private double powerMultiplier = 1.0;
 
     public enum ShooterState {
         FORWARD,
@@ -89,6 +90,22 @@ public class Shooter implements Mechanism {
         return gateServo != null ? gateServo.getPosition() : GATE_CLOSED;
     }
 
+    public void setPowerMultiplier(double value) {
+        this.powerMultiplier = Math.max(0.1, Math.min(1.0, value));
+    }
+
+    public double getPowerMultiplier() {
+        return powerMultiplier;
+    }
+
+    public Command increasePower() {
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.1));
+    }
+
+    public Command decreasePower() {
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.1));
+    }
+
     private void updateGatePosition() {
         if (gateServo != null) {
             if (shooterState == ShooterState.FORWARD) {
@@ -103,10 +120,10 @@ public class Shooter implements Mechanism {
     public void periodic() {
         switch (shooterState) {
             case FORWARD:
-                shootMotor1.setThrottle(FORWARD_POWER);
+                shootMotor1.setThrottle(FORWARD_POWER * powerMultiplier);
                 break;
             case REVERSE:
-                shootMotor1.setThrottle(REVERSE_POWER);
+                shootMotor1.setThrottle(REVERSE_POWER * powerMultiplier);
                 break;
             case OFF:
                 shootMotor1.setThrottle(OFF_POWER);

@@ -32,6 +32,9 @@ public class ShootTestSingleMotor extends NextOpMode {
         gp2.b().onTrue(robot.shooter.off());
         gp2.x().onTrue(robot.shooter.reverse());
         gp2.y().onTrue(robot.shooter.cycle());
+
+        gp2.leftBumper().onTrue(robot.shooter.decreasePower());
+        gp2.rightBumper().onTrue(robot.shooter.increasePower());
     }
 
     @Override
@@ -39,6 +42,7 @@ public class ShootTestSingleMotor extends NextOpMode {
         telemetry.addData("Shooter State", robot.shooter.getState());
         telemetry.addData("Shooter RPM", robot.shooter.getRPM());
         telemetry.addData("Shooter Power", robot.shooter.getPower());
+        telemetry.addData("Power Multiplier", String.format("%.1f", robot.shooter.getPowerMultiplier()));
         telemetry.addData("Gate Position", robot.shooter.getGatePosition());
         telemetry.addData("Gate Status",
                 robot.shooter.getState() == Shooter.ShooterState.FORWARD ? "OPEN" : "CLOSED");
