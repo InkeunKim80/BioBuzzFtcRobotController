@@ -59,27 +59,8 @@ public class Shooter implements Mechanism {
         return setState(ShooterState.OFF);
     }
 
-    public Command cycle(){
-        return instant(() -> {
-            switch (shooterState) {
-                case FORWARD:
-                case REVERSE:
-                    shooterState = ShooterState.OFF;
-                    break;
-                case OFF:
-                    shooterState = ShooterState.FORWARD;
-                    break;
-            }
-            updateGatePosition();
-        });
-    }
-
     public ShooterState getState() {
         return shooterState;
-    }
-
-    public double getRPM(){
-        return shootMotor1.getEncoderVelocity().into(RotationsPerMinute);
     }
 
     public double getPower(){
@@ -99,11 +80,19 @@ public class Shooter implements Mechanism {
     }
 
     public Command increasePower() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.1));
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.05));
     }
 
     public Command decreasePower() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.1));
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.05));
+    }
+
+    public Command adjustLeftBumper() {
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.05));
+    }
+
+    public Command adjustRightBumper() {
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.05));
     }
 
     private void updateGatePosition() {

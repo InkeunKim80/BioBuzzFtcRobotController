@@ -26,7 +26,6 @@ public class IntakeTest extends NextOpMode {
         gp2.a().onTrue(robot.intake.forward());
         gp2.b().onTrue(robot.intake.off());
         gp2.x().onTrue(robot.intake.reverse());
-        gp2.y().onTrue(robot.intake.cycle());
     }
 
     @Override

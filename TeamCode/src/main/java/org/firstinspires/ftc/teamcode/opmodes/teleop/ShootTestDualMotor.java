@@ -32,10 +32,9 @@ public class ShootTestDualMotor extends NextOpMode {
         gp2.a().onTrue(shooterDual.forward());
         gp2.b().onTrue(shooterDual.off());
         gp2.x().onTrue(shooterDual.reverse());
-        gp2.y().onTrue(shooterDual.cycle());
 
-        gp2.leftBumper().onTrue(shooterDual.decreasePower());
-        gp2.rightBumper().onTrue(shooterDual.increasePower());
+        gp2.leftBumper().onTrue(shooterDual.adjustLeftBumper());
+        gp2.rightBumper().onTrue(shooterDual.adjustRightBumper());
     }
 
     @Override

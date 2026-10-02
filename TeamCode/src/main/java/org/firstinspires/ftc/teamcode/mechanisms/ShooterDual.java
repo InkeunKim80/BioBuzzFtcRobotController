@@ -37,7 +37,7 @@ public class ShooterDual implements Mechanism {
 
     public ShooterDual() {
         shootMotor1.setDirection(NextMotor.Direction.REVERSE);
-        shootMotor2.setDirection(NextMotor.Direction.REVERSE);
+        shootMotor2.setDirection(NextMotor.Direction.FORWARD);
     }
 
     public void setGateServo(Servo servo) {
@@ -62,21 +62,6 @@ public class ShooterDual implements Mechanism {
 
     public Command off() {
         return setState(ShooterState.OFF);
-    }
-
-    public Command cycle(){
-        return instant(() -> {
-            switch (shooterState) {
-                case FORWARD:
-                case REVERSE:
-                    shooterState = ShooterState.OFF;
-                    break;
-                case OFF:
-                    shooterState = ShooterState.FORWARD;
-                    break;
-            }
-            updateGatePosition();
-        });
     }
 
     public ShooterState getState() {
@@ -112,11 +97,19 @@ public class ShooterDual implements Mechanism {
     }
 
     public Command increasePower() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.1));
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.05));
     }
 
     public Command decreasePower() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.1));
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.05));
+    }
+
+    public Command adjustLeftBumper() {
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.05));
+    }
+
+    public Command adjustRightBumper() {
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.05));
     }
 
     private void updateGatePosition() {

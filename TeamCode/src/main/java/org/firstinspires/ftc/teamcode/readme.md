@@ -286,6 +286,10 @@ Control Hub Motor Ports (4-7): Other Systems
 
 ### IntakeTest - Intake Motor Testing
 
+**Location**: `org.firstinspires.ftc.teamcode.opmodes.teleop.IntakeTest`
+
+**Purpose**: Tests the intake mechanism independently to verify motor operation, speed, and state transitions.
+
 | Control | Action |
 |---------|--------|
 | **Gamepad 2 - A Button** | Forward (Intake) |
@@ -294,55 +298,117 @@ Control Hub Motor Ports (4-7): Other Systems
 | **Gamepad 2 - Y Button** | Cycle State |
 
 **Telemetry Display**:
-- Intake State (FORWARD / REVERSE / OFF)
-- Intake RPM
-- Intake Power (Throttle)
+- **Intake State**: Current state of the intake (FORWARD / REVERSE / OFF)
+- **Intake RPM**: Current revolutions per minute of the intake motor
+- **Intake Power**: Current throttle/power output being sent to the intake motor
+
+**Motor Configuration**:
+- Motor Name: `intakeMotor`
+- Control Hub Port: 4
+- Direction: REVERSE
+- RPM: 312 (GoBILDA 312 RPM Motor)
+
+**Usage**: Use this mode to verify that the intake motor spins correctly in both directions and responds to control inputs before competition.
 
 ---
 
 ### ShootTestSingleMotor - Single Motor Shooting (Option 1)
 
+**Location**: `org.firstinspires.ftc.teamcode.opmodes.teleop.ShootTestSingleMotor`
+
+**Purpose**: Tests the single-motor shooter mechanism with manual power control.
+
 | Control | Action |
 |---------|--------|
-| **Gamepad 2 - A Button** | Forward (Shoot) → **Gate Opens** |
-| **Gamepad 2 - B Button** | Off (Stop) → **Gate Closes** |
-| **Gamepad 2 - X Button** | Reverse → **Gate Closes** |
-| **Gamepad 2 - Y Button** | Cycle State |
+| **Gamepad 2 - A Button** | Shooter Forward (Spin) → **Gate Opens** |
+| **Gamepad 2 - B Button** | Shooter Off (Stop) → **Gate Closes** |
+| **Gamepad 2 - X Button** | Shooter Reverse → **Gate Closes** |
+| **Gamepad 2 - Left Bumper (LB)** | Decrease Power by 0.05 (min 0.1) |
+| **Gamepad 2 - Right Bumper (RB)** | Increase Power by 0.05 (max 1.0) |
+
+**Power Control**:
+- Manual control of motor power output
+- Power Multiplier range: 0.1 to 1.0
+- Adjustment: ±0.05 per bumper press
 
 **Telemetry Display**:
-- Shooter State (FORWARD / REVERSE / OFF)
-- Shooter RPM
-- Shooter Power (Throttle)
-- **Gate Position** (0.0 = Closed, 1.0 = Open)
-- **Gate Status** (OPEN / CLOSED)
+- **Shooter State**: FORWARD / REVERSE / OFF
+- **Shooter Power**: Current throttle/power output
+- **Power Multiplier**: Current power multiplier value (0.1 to 1.0)
+- **Gate Position**: Current servo position (0.0 to 1.0)
+- **Gate Status**: OPEN / CLOSED
 
-**Motors**: shootMotor (Port 5, 6000 RPM)  
-**Servo**: gateServo (Servo Port 0)  
-**Configuration**: Option 1 - Single Motor Shooter with Automatic Gate Control
+**Motor Configuration**:
+- Motor Name: `shootMotor1`
+- Control Hub Port: 5
+- Direction: REVERSE
+- RPM: 6000 (GoBILDA 6000 RPM High-Speed Motor)
+
+**Servo Configuration**:
+- Servo Name: `gateServo`
+- Servo Port: 0
+- Position 0.0: Closed
+- Position 1.0: Open
+- Auto-controlled: Opens when FORWARD, closes when OFF or REVERSE
+
+**Usage**: Use this mode to test the single shooter motor, verify RPM feedback accuracy, tune PID parameters, and test the gate servo before competition.
 
 ---
 
 ### ShootTestDualMotor - Dual Motor Shooting (Option 2)
 
+**Location**: `org.firstinspires.ftc.teamcode.opmodes.teleop.ShootTestDualMotor`
+
+**Purpose**: Tests the dual-motor shooter mechanism with manual power control. Both motors work together for increased shooting power.
+
 | Control | Action |
 |---------|--------|
-| **Gamepad 2 - A Button** | Forward (Shoot) → **Gate Opens** |
-| **Gamepad 2 - B Button** | Off (Stop) → **Gate Closes** |
-| **Gamepad 2 - X Button** | Reverse → **Gate Closes** |
-| **Gamepad 2 - Y Button** | Cycle State |
+| **Gamepad 2 - A Button** | Both Shooters Forward (Spin) → **Gate Opens** |
+| **Gamepad 2 - B Button** | Both Shooters Off (Stop) → **Gate Closes** |
+| **Gamepad 2 - X Button** | Both Shooters Reverse → **Gate Closes** |
+| **Gamepad 2 - Left Bumper (LB)** | Decrease Power by 0.05 (min 0.1) |
+| **Gamepad 2 - Right Bumper (RB)** | Increase Power by 0.05 (max 1.0) |
+
+**Power Control**:
+- Manual control of motor power output
+- Power Multiplier range: 0.1 to 1.0
+- Adjustment: ±0.05 per bumper press
+- Applied equally to both motors
 
 **Telemetry Display**:
-- Shooter State (FORWARD / REVERSE / OFF)
-- Shooter Motor 1 RPM
-- Shooter Motor 2 RPM
-- Shooter Motor 1 Power (Throttle)
-- Shooter Motor 2 Power (Throttle)
-- **Gate Position** (0.0 = Closed, 1.0 = Open)
-- **Gate Status** (OPEN / CLOSED)
+- **Shooter State**: FORWARD / REVERSE / OFF
+- **Shooter Motor 1 RPM**: RPM of the first motor (reversed direction)
+- **Shooter Motor 2 RPM**: RPM of the second motor (forward direction)
+- **Shooter Motor 1 Power**: Throttle/power output to first motor
+- **Shooter Motor 2 Power**: Throttle/power output to second motor
+- **Power Multiplier**: Current power multiplier value (0.1 to 1.0)
+- **Gate Position**: Current servo position (0.0 to 1.0)
+- **Gate Status**: OPEN / CLOSED
 
-**Motors**: shootMotor1 (Port 5), shootMotor2 (Port 6) - Both 6000 RPM  
-**Servo**: gateServo (Servo Port 0)  
-**Configuration**: Option 2 - Dual Motor Shooter with Automatic Gate Control
+**Motor Configuration**:
+- Motor 1 Name: `shootMotor1`
+  - Control Hub Port: 5
+  - Direction: REVERSE
+  - RPM: 6000
+- Motor 2 Name: `shootMotor2`
+  - Control Hub Port: 6
+  - Direction: FORWARD
+  - RPM: 6000
+
+**Servo Configuration**:
+- Servo Name: `gateServo`
+- Servo Port: 0
+- Position 0.0: Closed
+- Position 1.0: Open
+- Auto-controlled: Opens when FORWARD, closes when OFF or REVERSE
+
+**Motor Synchronization**:
+- Both motors receive identical control commands
+- Same power multiplier applied to both
+- Same target RPM and PID feedback control
+- Motors spin in coordinated opposite directions (Motor 1 reverse, Motor 2 forward)
+
+**Usage**: Use this mode to verify that both shooter motors work correctly together, compare motor performance, ensure synchronized spinning, and test the complete dual-motor shooter system before competition.
 
 ---
 
@@ -375,18 +441,27 @@ Control Hub Motor Ports (4-7): Other Systems
 
 ### ScoopTest - Scoop Servo Testing
 
+**Location**: `org.firstinspires.ftc.teamcode.opmodes.teleop.ScoopTest`
+
+**Purpose**: Tests the scoop servo mechanism independently to verify smooth motion and state control.
+
 | Control | Action |
 |---------|--------|
-| **Gamepad 2 - A Button** | Open Scoop |
-| **Gamepad 2 - B Button** | Close Scoop |
-| **Gamepad 2 - Y Button** | Toggle Scoop |
+| **Gamepad 2 - A Button** | Open Scoop (Position 1.0) |
+| **Gamepad 2 - B Button** | Close Scoop (Position 0.0) |
+| **Gamepad 2 - Y Button** | Toggle Scoop (Switch between open and closed) |
 
 **Telemetry Display**:
-- Scoop State (OPEN / CLOSED)
-- Scoop Position (0.0 = Closed, 1.0 = Open)
+- **Scoop State**: Current state (OPEN or CLOSED)
+- **Scoop Position**: Current servo position value (0.0 to 1.0)
 
-**Servo**: scoopServo (Servo Port 1)  
-**Use Case**: Manual scoop control for ball collection and discharge
+**Servo Configuration**:
+- Servo Name: `scoopServo`
+- Servo Port: 1
+- Position 0.0: Closed (for ball collection and retention)
+- Position 1.0: Open (for ball delivery and discharge)
+
+**Use Case**: Manual scoop control for ball collection and discharge. Use this mode to verify that the scoop servo moves smoothly between open and closed positions and responds to control inputs.
 
 ---
 
