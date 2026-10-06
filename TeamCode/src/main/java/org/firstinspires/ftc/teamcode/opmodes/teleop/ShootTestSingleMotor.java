@@ -34,13 +34,21 @@ public class ShootTestSingleMotor extends NextOpMode {
 
         gp2.leftBumper().onTrue(robot.shooter.adjustLeftBumper());
         gp2.rightBumper().onTrue(robot.shooter.adjustRightBumper());
+
+        gp2.leftStickButton().onTrue(robot.shooter.enableRPMControl());
+        gp2.rightStickButton().onTrue(robot.shooter.enablePowerControl());
     }
 
     @Override
     public void periodic() {
         telemetry.addData("Shooter State", robot.shooter.getState());
+        telemetry.addData("Shooter RPM", robot.shooter.getRPM());
         telemetry.addData("Shooter Power", robot.shooter.getPower());
         telemetry.addData("Power Multiplier", String.format("%.1f", robot.shooter.getPowerMultiplier()));
+        telemetry.addData("Control Mode", robot.shooter.isRPMControlEnabled() ? "RPM Control" : "Power Control");
+        if (robot.shooter.isRPMControlEnabled()) {
+            telemetry.addData("Target RPM", String.format("%.0f", robot.shooter.getTargetRPM()));
+        }
         telemetry.addData("Gate Position", robot.shooter.getGatePosition());
         telemetry.addData("Gate Status",
                 robot.shooter.getState() == Shooter.ShooterState.FORWARD ? "OPEN" : "CLOSED");

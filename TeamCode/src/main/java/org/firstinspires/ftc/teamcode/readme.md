@@ -316,25 +316,41 @@ Control Hub Motor Ports (4-7): Other Systems
 
 **Location**: `org.firstinspires.ftc.teamcode.opmodes.teleop.ShootTestSingleMotor`
 
-**Purpose**: Tests the single-motor shooter mechanism with manual power control.
+**Purpose**: Tests the single-motor shooter mechanism with dual control modes (RPM feedback control and power multiplier control).
 
 | Control | Action |
 |---------|--------|
 | **Gamepad 2 - A Button** | Shooter Forward (Spin) → **Gate Opens** |
 | **Gamepad 2 - B Button** | Shooter Off (Stop) → **Gate Closes** |
 | **Gamepad 2 - X Button** | Shooter Reverse → **Gate Closes** |
-| **Gamepad 2 - Left Bumper (LB)** | Decrease Power by 0.05 (min 0.1) |
-| **Gamepad 2 - Right Bumper (RB)** | Increase Power by 0.05 (max 1.0) |
+| **Gamepad 2 - Left Bumper (LB)** | Decrease Control Value (Power: -0.05 / RPM: -200) |
+| **Gamepad 2 - Right Bumper (RB)** | Increase Control Value (Power: +0.05 / RPM: +200) |
+| **Gamepad 2 - Left Stick Button** | Enable RPM Control Mode |
+| **Gamepad 2 - Right Stick Button** | Enable Power Control Mode |
 
-**Power Control**:
+**Control Modes**:
+
+**Power Control Mode**:
 - Manual control of motor power output
 - Power Multiplier range: 0.1 to 1.0
 - Adjustment: ±0.05 per bumper press
+- Use when you want direct power control
+
+**RPM Control Mode** (PID Feedback):
+- Automatic speed feedback control using PID algorithm
+- Default target RPM: 1500
+- Adjustment: ±200 RPM per bumper press
+- Uses encoder feedback to maintain precise speed
+- PID Constants: KP=0.002, KI=0.0001, KD=0.0, MAX_INTEGRAL=0.5
+- Use when you need consistent, stable shooting speed
 
 **Telemetry Display**:
 - **Shooter State**: FORWARD / REVERSE / OFF
+- **Shooter RPM**: Current revolutions per minute
 - **Shooter Power**: Current throttle/power output
 - **Power Multiplier**: Current power multiplier value (0.1 to 1.0)
+- **Control Mode**: RPM Control or Power Control
+- **Target RPM**: Target RPM value (only displayed in RPM Control mode)
 - **Gate Position**: Current servo position (0.0 to 1.0)
 - **Gate Status**: OPEN / CLOSED
 
@@ -359,20 +375,32 @@ Control Hub Motor Ports (4-7): Other Systems
 
 **Location**: `org.firstinspires.ftc.teamcode.opmodes.teleop.ShootTestDualMotor`
 
-**Purpose**: Tests the dual-motor shooter mechanism with manual power control. Both motors work together for increased shooting power.
+**Purpose**: Tests the dual-motor shooter mechanism with dual control modes (RPM feedback control and power multiplier control). Both motors work together for increased shooting power and consistency.
 
 | Control | Action |
 |---------|--------|
 | **Gamepad 2 - A Button** | Both Shooters Forward (Spin) → **Gate Opens** |
 | **Gamepad 2 - B Button** | Both Shooters Off (Stop) → **Gate Closes** |
 | **Gamepad 2 - X Button** | Both Shooters Reverse → **Gate Closes** |
-| **Gamepad 2 - Left Bumper (LB)** | Decrease Power by 0.05 (min 0.1) |
-| **Gamepad 2 - Right Bumper (RB)** | Increase Power by 0.05 (max 1.0) |
+| **Gamepad 2 - Left Bumper (LB)** | Decrease Control Value (Power: -0.05 / RPM: -200) |
+| **Gamepad 2 - Right Bumper (RB)** | Increase Control Value (Power: +0.05 / RPM: +200) |
+| **Gamepad 2 - Left Stick Button** | Enable RPM Control Mode |
+| **Gamepad 2 - Right Stick Button** | Enable Power Control Mode |
 
-**Power Control**:
+**Control Modes**:
+
+**Power Control Mode**:
 - Manual control of motor power output
 - Power Multiplier range: 0.1 to 1.0
 - Adjustment: ±0.05 per bumper press
+- Applied equally to both motors
+
+**RPM Control Mode** (PID Feedback):
+- Automatic speed feedback control using PID algorithm
+- Default target RPM: 1500
+- Adjustment: ±200 RPM per bumper press
+- Uses encoder feedback to maintain precise speed
+- PID Constants: KP=0.002, KI=0.0001, KD=0.0, MAX_INTEGRAL=0.5
 - Applied equally to both motors
 
 **Telemetry Display**:
@@ -382,6 +410,8 @@ Control Hub Motor Ports (4-7): Other Systems
 - **Shooter Motor 1 Power**: Throttle/power output to first motor
 - **Shooter Motor 2 Power**: Throttle/power output to second motor
 - **Power Multiplier**: Current power multiplier value (0.1 to 1.0)
+- **Control Mode**: RPM Control or Power Control
+- **Target RPM**: Target RPM value (only displayed in RPM Control mode)
 - **Gate Position**: Current servo position (0.0 to 1.0)
 - **Gate Status**: OPEN / CLOSED
 
