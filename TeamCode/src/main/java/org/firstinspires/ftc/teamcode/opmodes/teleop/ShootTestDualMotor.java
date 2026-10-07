@@ -38,6 +38,9 @@ public class ShootTestDualMotor extends NextOpMode {
         gp2.a().onTrue(shooterDual.forward());
         gp2.b().onTrue(shooterDual.off());
         gp2.x().onTrue(shooterDual.reverse());
+
+        gp2.leftStickButton().onTrue(shooterDual.enableRPMControl());
+        gp2.rightStickButton().onTrue(shooterDual.enablePowerControl());
     }
 
     @Override
@@ -69,6 +72,10 @@ public class ShootTestDualMotor extends NextOpMode {
         telemetry.addData("Shooter Motor 1 Power", shooterDual.getPower1());
         telemetry.addData("Shooter Motor 2 Power", shooterDual.getPower2());
         telemetry.addData("Power Multiplier", String.format("%.2f", shooterDual.getPowerMultiplier()));
+        telemetry.addData("Control Mode", shooterDual.isRPMControlEnabled() ? "RPM Control" : "Power Control");
+        if (shooterDual.isRPMControlEnabled()) {
+            telemetry.addData("Target RPM", String.format("%.0f", shooterDual.getTargetRPM()));
+        }
         telemetry.addData("LB Pressed", gamepad2.left_bumper);
         telemetry.addData("RB Pressed", gamepad2.right_bumper);
         telemetry.addData("LT Value", String.format("%.2f", gamepad2.left_trigger));

@@ -37,6 +37,9 @@ public class ShootTestSingleMotor extends NextOpMode {
         gp2.a().onTrue(robot.shooter.forward());
         gp2.b().onTrue(robot.shooter.off());
         gp2.x().onTrue(robot.shooter.reverse());
+
+        gp2.leftStickButton().onTrue(robot.shooter.enableRPMControl());
+        gp2.rightStickButton().onTrue(robot.shooter.enablePowerControl());
     }
 
     @Override
@@ -63,8 +66,13 @@ public class ShootTestSingleMotor extends NextOpMode {
         }
 
         telemetry.addData("Shooter State", robot.shooter.getState());
+        telemetry.addData("Shooter RPM", robot.shooter.getRPM());
         telemetry.addData("Shooter Power", robot.shooter.getPower());
         telemetry.addData("Power Multiplier", String.format("%.2f", robot.shooter.getPowerMultiplier()));
+        telemetry.addData("Control Mode", robot.shooter.isRPMControlEnabled() ? "RPM Control" : "Power Control");
+        if (robot.shooter.isRPMControlEnabled()) {
+            telemetry.addData("Target RPM", String.format("%.0f", robot.shooter.getTargetRPM()));
+        }
         telemetry.addData("LB Pressed", gamepad2.left_bumper);
         telemetry.addData("RB Pressed", gamepad2.right_bumper);
         telemetry.addData("LT Value", String.format("%.2f", gamepad2.left_trigger));
