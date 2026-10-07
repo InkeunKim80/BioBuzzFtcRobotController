@@ -8,11 +8,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.Mechanism;
+import org.firstinspires.ftc.teamcode.hardware.MotorConstants;
 
 public class Shooter implements Mechanism {
     private final NextMotor shootMotor1 = new NextMotor(
             "shootMotor1",
-            Degrees.of(360.0 / 28.0)
+            Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_312_COUNTS_PER_REV)
     );
     private Servo gateServo;
     private ShooterState shooterState = ShooterState.OFF;
@@ -80,19 +81,19 @@ public class Shooter implements Mechanism {
     }
 
     public Command increasePower() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.05));
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.01));
     }
 
     public Command decreasePower() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.05));
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.01));
     }
 
     public Command adjustLeftBumper() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.05));
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.01));
     }
 
     public Command adjustRightBumper() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.05));
+        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.01));
     }
 
     private void updateGatePosition() {
