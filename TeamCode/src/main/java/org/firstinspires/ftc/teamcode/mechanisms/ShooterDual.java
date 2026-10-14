@@ -21,7 +21,7 @@ public class ShooterDual implements Mechanism {
     );
     private Servo gateServo;
     private ShooterState shooterState = ShooterState.OFF;
-    private double powerMultiplier = 1.0;
+    private double powerMultiplier = 0.3;
 
     public enum ShooterState {
         FORWARD,
