@@ -1,72 +1,74 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.ivy.Scheduler;
+import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
-import com.pedropathing.paths.AtomicPath;
-import com.pedropathing.paths.CompoundPath;
 import com.pedropathing.paths.Path;
-import com.pedropathing.paths.curves.Line;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
+import dev.nextftc.robot.opmode.NextAutonomous;
 import dev.nextftc.robot.opmode.NextOpMode;
 
-@Autonomous(name = "Example Auton Pedro", group = "Examples")
+import static com.pedropathing.api.Paths.line;
+import static com.pedropathing.ivy.Scheduler.schedule;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
+import static com.pedropathing.ivy.groups.Groups.sequential;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
+
+@Disabled
+@NextAutonomous(name = "Example Auton Pedro", group = "Examples")
 public class ExampleAutonPedro extends NextOpMode {
+
     private final Robot robot;
-    private Follower follower;
-    private Path mainPath;
+    private final Follower follower;
+
+    private final PoseFactory poseFactory = PoseFactory.degrees();
+
+    // Pedro coordinates are in inches.
+    private final Pose startPose = poseFactory.of(0, 0, 0);
+
+    private final Pose endPose = poseFactory.of(24, 0, 0);
 
     public ExampleAutonPedro(Robot robot) {
         super(robot);
         this.robot = robot;
 
-        Scheduler.reset();
+        follower = Constants.create(hardwareMap)
+                .withLogger(log -> telemetry.addData("Follower", log.toString()));
+
+        follower.setPose(startPose);
+        follower.update();
     }
 
-    @Override
-    public void disabledPeriodic() {
-        if (follower == null) {
-            follower = Constants.create(hardwareMap);
-            if (follower != null) {
-                follower.setPose(new Pose(0, 0, 0));
-                mainPath = buildPath();
-                follower.update();
-                telemetry.addData("Follower Status", "Initialized");
-            } else {
-                telemetry.addData("Follower Status", "Failed to initialize (Constants.create returned null)");
-            }
-        }
-        telemetry.update();
+    private Path forwardPath() {
+        return line(startPose, endPose).constant(startPose);
+    }
+
+    private Command autoRoutine() {
+        return sequential(
+                follow(follower, forwardPath()),
+                robot.intake.forward(),
+                waitMs(2000),
+                robot.intake.off()
+        );
     }
 
     @Override
     public void start() {
-        if (follower != null && mainPath != null) {
-            follower.follow(mainPath);
-        }
+        schedule(autoRoutine());
     }
 
     @Override
     public void periodic() {
-        if (follower != null) {
-            follower.update();
+        follower.update();
 
-            Pose pose = follower.pose();
-            telemetry.addData("X", String.format("%.2f", pose.x()));
-            telemetry.addData("Y", String.format("%.2f", pose.y()));
-            telemetry.addData("Heading (deg)", String.format("%.2f", Math.toDegrees(pose.heading())));
-            telemetry.addData("Following", follower.isBusy());
-        }
-        telemetry.update();
-    }
-
-    private Path buildPath() {
-        Path forward = new AtomicPath(new Line(new Pose(0, 0), new Pose(24, 0))).constant(0);
-        Path strafe = new AtomicPath(new Line(new Pose(24, 0), new Pose(24, 12))).constant(0);
-        return new CompoundPath(forward, strafe);
+        telemetry.addData("X", "%.2f", follower.pose().x());
+        telemetry.addData("Y", "%.2f", follower.pose().y());
+        telemetry.addData("Heading", "%.1f", Math.toDegrees(follower.pose().heading()));
+        telemetry.addData("Follower Mode", follower.mode());
     }
 }
