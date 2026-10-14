@@ -72,19 +72,13 @@ public class ExampleTeleOpPedro extends NextOpMode {
             follower.update();
 
             // Display current pose and sensor data
-            telemetry.addData("X Pos", follower.pose().getX());
-            telemetry.addData("Y Pos", follower.pose().getY());
-            telemetry.addData("Heading", Math.toDegrees(follower.pose().getHeading()));
+            telemetry.addData("X Pos", follower.pose().x());
+            telemetry.addData("Y Pos", follower.pose().y());
+            telemetry.addData("Heading", Math.toDegrees(follower.pose().heading()));
         }
 
         telemetry.update();
     }
 
     // Called exactly once when the OpMode finishes execution
-    @Override
-    public void end() {
-        if (follower != null) {
-            follower.holdPoint(follower.pose());
-        }
-    }
 }
