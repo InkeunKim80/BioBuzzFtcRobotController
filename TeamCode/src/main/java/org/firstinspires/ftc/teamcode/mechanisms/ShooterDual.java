@@ -115,7 +115,7 @@ public class ShooterDual implements Mechanism {
 
     private void updateGatePosition() {
         if (gateServo != null) {
-            if (shooterState == ShooterState.FORWARD) {
+            if (shooterState == ShooterState.REVERSE) {
                 gateServo.setPosition(GATE_OPEN);
             } else {
                 gateServo.setPosition(GATE_CLOSED);
