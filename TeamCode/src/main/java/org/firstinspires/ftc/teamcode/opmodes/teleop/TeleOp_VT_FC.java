@@ -5,7 +5,6 @@ import static com.pedropathing.ivy.commands.Commands.infinite;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -43,8 +42,6 @@ public class TeleOp_VT_FC extends NextOpMode {
 
     @Override
     public void start() {
-        Servo gateServo = hardwareMap.get(Servo.class, "gateServo");
-        robot.shooterDual.setGateServo(gateServo);
 
         CommandGamepad gp1 = new CommandGamepad(gamepad1);
         CommandGamepad gp2 = new CommandGamepad(gamepad2);

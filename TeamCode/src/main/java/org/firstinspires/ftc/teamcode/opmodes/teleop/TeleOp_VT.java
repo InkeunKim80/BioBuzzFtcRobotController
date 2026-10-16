@@ -25,13 +25,11 @@ public class TeleOp_VT extends NextOpMode {
 
     @Override
     public void start() {
-        Servo gateServo = hardwareMap.get(Servo.class, "gateServo");
-        robot.shooterDual.setGateServo(gateServo);
 
         CommandGamepad gp1 = new CommandGamepad(gamepad1);
         CommandGamepad gp2 = new CommandGamepad(gamepad2);
 
-        // Controller 1: drive + shoot
+        // Controller 1: drive
         robot.drivetrain.startDrive(gamepad1);
 
         gp1.leftBumper().whileTrue(
@@ -39,21 +37,23 @@ public class TeleOp_VT extends NextOpMode {
                         .setEnd(end -> DriveCommands.setScalar(1.0))
         );
 
-        gp1.a().onTrue(robot.shooterDual.forward());
-        gp1.b().onTrue(robot.shooterDual.off());
-        gp1.x().onTrue(robot.shooterDual.reverse());
-
-        gp1.dpadUp().onTrue(robot.shooterDual.increasePower());
-        gp1.dpadDown().onTrue(robot.shooterDual.decreasePower());
-
-        // Controller 2: intake + slider
+        // Controller 2: intake + shooter + slider
         gp2.a().onTrue(robot.intake.forward());
+        gp2.a().onTrue(robot.shooterDual.forward());
         gp2.b().onTrue(robot.intake.off());
+        gp2.b().onTrue(robot.shooterDual.off());
         gp2.x().onTrue(robot.intake.reverse());
+        gp2.x().onTrue(robot.shooterDual.reverse());
+
+        gp2.dpadUp().onTrue(robot.shooterDual.increasePower());
+        gp2.dpadDown().onTrue(robot.shooterDual.decreasePower());
+
+        // Gate toggle on Y
+        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
+        gp2.y().onTrue(robot.gate.toggle());
 
         // Slider placeholder: hardware not yet installed
         // CommandGamepad gp2 slider controls (enable when Slider hardware is ready)
-        // gp2.y().onTrue(robot.slider.extend());
         // gp2.rightBumper().onTrue(robot.slider.returnToStart());
     }
 
@@ -65,7 +65,6 @@ public class TeleOp_VT extends NextOpMode {
         telemetry.addData("Shooter Power 1", robot.shooterDual.getPower1());
         telemetry.addData("Shooter Power 2", robot.shooterDual.getPower2());
         telemetry.addData("Power Multiplier", String.format("%.2f", robot.shooterDual.getPowerMultiplier()));
-        telemetry.addData("Gate Position", robot.shooterDual.getGatePosition());
         telemetry.addData("Intake State", robot.intake.getState());
         telemetry.addData("Intake Power", robot.intake.getPower());
         // telemetry.addData("Slider Position", robot.slider.getCurrentPosition());

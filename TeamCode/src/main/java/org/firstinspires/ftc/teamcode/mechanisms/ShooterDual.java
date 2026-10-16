@@ -4,7 +4,6 @@ import static dev.nextftc.units.Units.Degrees;
 import static dev.nextftc.units.Units.RotationsPerMinute;
 
 import com.pedropathing.ivy.Command;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.Mechanism;
@@ -19,7 +18,6 @@ public class ShooterDual implements Mechanism {
             "shootMotor2",
             Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_312_COUNTS_PER_REV)
     );
-    private Servo gateServo;
     private ShooterState shooterState = ShooterState.OFF;
     private double powerMultiplier = 0.3;
 
@@ -33,23 +31,14 @@ public class ShooterDual implements Mechanism {
     private static final double REVERSE_POWER = -1.0;
     private static final double OFF_POWER = 0.0;
 
-    private static final double GATE_OPEN = 1.0;
-    private static final double GATE_CLOSED = 0.0;
-
     public ShooterDual() {
         shootMotor1.setDirection(NextMotor.Direction.REVERSE);
         shootMotor2.setDirection(NextMotor.Direction.FORWARD);
     }
 
-    public void setGateServo(Servo servo) {
-        this.gateServo = servo;
-        gateServo.setPosition(GATE_CLOSED);
-    }
-
     public Command setState(ShooterState shooterState) {
         return instant(() -> {
             this.shooterState = shooterState;
-            updateGatePosition();
         });
     }
 
@@ -85,10 +74,6 @@ public class ShooterDual implements Mechanism {
         return shootMotor2.getThrottle();
     }
 
-    public double getGatePosition() {
-        return gateServo != null ? gateServo.getPosition() : GATE_CLOSED;
-    }
-
     public void setPowerMultiplier(double value) {
         this.powerMultiplier = Math.max(0.1, Math.min(1.0, value));
     }
@@ -111,16 +96,6 @@ public class ShooterDual implements Mechanism {
 
     public Command adjustRightBumper() {
         return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.01));
-    }
-
-    private void updateGatePosition() {
-        if (gateServo != null) {
-            if (shooterState == ShooterState.REVERSE) {
-                gateServo.setPosition(GATE_OPEN);
-            } else {
-                gateServo.setPosition(GATE_CLOSED);
-            }
-        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import org.firstinspires.ftc.teamcode.mechanisms.Gate;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Drivetrain;
 // import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
@@ -17,11 +18,12 @@ public class Robot implements NextRobot {
     public final Intake intake = new Intake();
     public final ShooterDual shooterDual = new ShooterDual();
     // public final Shooter shooter = new Shooter();
+    public final Gate gate = new Gate();
     public final Slider slider = new Slider();
     public final Scoop scoop = new Scoop();
 
     @Override
     public Set<Mechanism> getMechanisms() {
-        return Set.of(drivetrain, intake, shooterDual, slider, scoop);
+        return Set.of(drivetrain, intake, shooterDual, gate, slider, scoop);
     }
 }

@@ -4,8 +4,11 @@ import static com.pedropathing.ivy.commands.Commands.infinite;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Scheduler;
+import com.pedropathing.math.Pose;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import dev.nextftc.robot.drive.DriveCommands;
@@ -31,8 +34,10 @@ public class ExampleTeleOpPedro extends NextOpMode {
         if (follower == null) {
             follower = Constants.create(hardwareMap);
             if (follower != null) {
-                // Optional: Set robot starting pose here
-                // follower.setPose(new Pose(x, y, heading));
+                Pose savedPose = PoseStorage.load();
+                if (savedPose != null) {
+                    follower.setPose(savedPose);
+                }
                 follower.update();
                 telemetry.addData("Follower Status", "Initialized");
             } else {
@@ -59,10 +64,18 @@ public class ExampleTeleOpPedro extends NextOpMode {
                         .setEnd(end -> DriveCommands.setScalar(1.0))
         );
 
-        // Intake controls on gamepad2
+        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
+
+        // Intake and shooter controls on gamepad2 (same buttons drive both)
         gp2.a().onTrue(robot.intake.forward());
+        gp2.a().onTrue(robot.shooterDual.forward());
         gp2.b().onTrue(robot.intake.off());
+        gp2.b().onTrue(robot.shooterDual.off());
         gp2.x().onTrue(robot.intake.reverse());
+        gp2.x().onTrue(robot.shooterDual.reverse());
+
+        // Gate toggle on Y
+        gp2.y().onTrue(robot.gate.toggle());
     }
 
     // Called repeatedly while the OpMode is actively running

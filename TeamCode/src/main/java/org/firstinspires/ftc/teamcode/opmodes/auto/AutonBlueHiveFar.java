@@ -5,8 +5,10 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import dev.nextftc.robot.opmode.NextAutonomous;
@@ -22,7 +24,7 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 public class AutonBlueHiveFar extends NextOpMode {
 
     private static final int POLLEN_COUNT = 4;
-    private static final long SHOOTER_SPIN_UP_MS = 1500;
+    private static final long GATE_OPEN_DELAY_MS = 500;
     private static final long SHOT_MS = 600;
 
     private final Robot robot;
@@ -55,10 +57,12 @@ public class AutonBlueHiveFar extends NextOpMode {
     private Command autoRoutine() {
         return sequential(
                 robot.shooterDual.reverse(),
-                waitMs(SHOOTER_SPIN_UP_MS),
                 robot.intake.reverse(),
+                waitMs(GATE_OPEN_DELAY_MS),
+                robot.gate.open(),
                 waitMs(SHOT_MS * POLLEN_COUNT),
                 robot.intake.off(),
+                robot.gate.close(),
                 robot.shooterDual.off(),
                 follow(follower, forwardPath())
         );
@@ -66,6 +70,7 @@ public class AutonBlueHiveFar extends NextOpMode {
 
     @Override
     public void start() {
+        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
         schedule(autoRoutine());
     }
 
@@ -77,5 +82,10 @@ public class AutonBlueHiveFar extends NextOpMode {
         telemetry.addData("Y", "%.2f", follower.pose().y());
         telemetry.addData("Heading", "%.1f", Math.toDegrees(follower.pose().heading()));
         telemetry.addData("Follower Mode", follower.mode());
+    }
+
+    @Override
+    public void end() {
+        PoseStorage.save(follower.pose());
     }
 }
