@@ -478,5 +478,3 @@ class TestsPose extends TuningOpMode<Boolean> {
         return true;
     }
 }
-
-
