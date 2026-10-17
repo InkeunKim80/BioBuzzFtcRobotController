@@ -20,6 +20,8 @@ import dev.nextftc.robot.triggers.CommandGamepad;
 @NextTeleop(name = "TeleOp VT", group = "Competition")
 public class TeleOp_VT extends NextOpMode {
     private static final double GATE_STEP = 0.05;
+    private static final double GATE_CLOSED = 0.2;
+    private static final double GATE_OPEN = 1.0;
 
     private final Robot robot;
 
@@ -43,8 +45,24 @@ public class TeleOp_VT extends NextOpMode {
                 infinite(() -> DriveCommands.setScalar(0.4))
                         .setEnd(end -> DriveCommands.setScalar(1.0))
         );
+        // Flower toggle on B
+        robot.flower.setServo(hardwareMap.get(CRServo.class, "flowerServo"));
+        gp1.b().onTrue(robot.flower.toggle());
 
         // Controller 2: intake + shooter + slider
+        gp2.b().onTrue(off());
+        gp2.a().onTrue(shoot());
+        gp2.x().onTrue(intakeon());
+        gp2.y().onTrue(intakeoff());
+
+        gp2.dpadUp().onTrue(robot.shooterDual.increasePower());
+        gp2.dpadDown().onTrue(robot.shooterDual.decreasePower());
+
+        // Slider placeholder: hardware not yet installed
+        // CommandGamepad gp2 slider controls (enable when Slider hardware is ready)
+        // gp2.rightBumper().onTrue(robot.slider.returnToStart());
+
+        /*
         //gp2.a().onTrue(robot.intake.forward());
         gp2.a().onTrue(robot.shooterDual.forward());
         gp2.x().onTrue(robot.intake.reverse());
@@ -52,10 +70,7 @@ public class TeleOp_VT extends NextOpMode {
         gp2.b().onTrue(robot.shooterDual.off());
         //gp2.b().onTrue(robot.gate.toggle());
 
-        //gp2.x().onTrue(robot.shooterDual.forward());
-
-        gp2.dpadUp().onTrue(robot.shooterDual.increasePower());
-        gp2.dpadDown().onTrue(robot.shooterDual.decreasePower());
+        //gp2.x().onTrue(robot.shooterDual.forward());     
 
         // Gate toggle on Y
         robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
@@ -67,28 +82,22 @@ public class TeleOp_VT extends NextOpMode {
         gp2.dpadLeft().onTrue(robot.gate.adjust(-GATE_STEP));
         gp2.dpadRight().onTrue(robot.gate.adjust(GATE_STEP));
 
-        // Flower toggle on B
-        robot.flower.setServo(hardwareMap.get(CRServo.class, "flowerServo"));
-        gp1.b().onTrue(robot.flower.toggle());
-
-
-        // Slider placeholder: hardware not yet installed
-        // CommandGamepad gp2 slider controls (enable when Slider hardware is ready)
-        // gp2.rightBumper().onTrue(robot.slider.returnToStart());
+        
+        */
     }
-/*
+
     private Command off() {
         return sequential(
                 robot.shooterDual.off(),
                 robot.intake.off(),
-                robot.gate.close()
+                robot.gate.setPosition(GATE_CLOSED)
         );
     }
 
-    private Command Shoot() {
+    private Command shoot() {
         return sequential(
                 robot.shooterDual.forward(),
-                robot.gate.open(),
+                robot.gate.setPosition(GATE_OPEN),
                 waitMs(500),
                 robot.intake.reverse()
         );
@@ -96,20 +105,20 @@ public class TeleOp_VT extends NextOpMode {
 
     private Command intakeon() {
         return sequential(
-                robot.intake.reverse(),
                 robot.shooterDual.off(),
-                robot.gate.close()
+                robot.gate.close(),
+                robot.intake.reverse()
         );
     }
 
     private Command intakeoff() {
         return sequential(
-                robot.intake.off()
-                //robot.shooterDual.off(),
-                //robot.gate.toggle()
+                robot.intake.off(),
+                robot.shooterDual.off(),
+                robot.gate.setPosition(GATE_CLOSED)
         );
     }
-        */
+        
 
     @Override
     public void periodic() {
