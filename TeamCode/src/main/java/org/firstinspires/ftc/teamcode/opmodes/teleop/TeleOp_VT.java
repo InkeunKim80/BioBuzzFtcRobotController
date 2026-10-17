@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import static com.pedropathing.ivy.commands.Commands.infinite;
 
 import com.pedropathing.ivy.Scheduler;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -51,6 +52,10 @@ public class TeleOp_VT extends NextOpMode {
         // Gate toggle on Y
         robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
         gp1.y().onTrue(robot.gate.toggle());
+
+        // Flower toggle on B
+        robot.flower.setServo(hardwareMap.get(CRServo.class, "flowerServo"));
+        gp1.b().onTrue(robot.flower.toggle());
 
 
         // Slider placeholder: hardware not yet installed
