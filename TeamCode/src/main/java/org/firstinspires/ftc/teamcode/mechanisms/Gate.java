@@ -28,6 +28,18 @@ public class Gate implements Mechanism {
         return instant(() -> servo.setPosition(servo.getPosition() > 0.5 ? CLOSED_POSITION : OPEN_POSITION));
     }
 
+    public Command setPosition(double position) {
+        return instant(() -> servo.setPosition(clamp(position)));
+    }
+
+    public Command adjust(double delta) {
+        return instant(() -> servo.setPosition(clamp(servo.getPosition() + delta)));
+    }
+
+    private static double clamp(double position) {
+        return Math.max(0.0, Math.min(1.0, position));
+    }
+
     public double getPosition() {
         return servo != null ? servo.getPosition() : CLOSED_POSITION;
     }

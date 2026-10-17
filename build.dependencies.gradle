@@ -4,6 +4,7 @@ repositories {
 
     // add maven repo for pedropathing
     maven {url 'https://repo.dairy.foundation/releases/' }
+    maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
 }
 
 dependencies {
@@ -21,13 +22,13 @@ dependencies {
 
     // Pedro
     implementation 'com.pedropathing:revhub:3.0.1'
-    implementation 'com.pedropathing:tuning:1.0.1'
+    implementation 'com.pedropathing:tuning:1.0.3-beta.1'
 
     // Ivy
     implementation 'com.pedropathing.ivy:pedro:1.1.1'
 
     // NextFTC
-    implementation 'dev.nextftc.v2:control:0.2.1'
-    implementation 'dev.nextftc.v2:hardware:0.2.1'
-    implementation 'dev.nextftc.v2:robot:0.2.1'
+    implementation 'dev.nextftc.v2:control:0.3.0-SNAPSHOT'
+    implementation 'dev.nextftc.v2:hardware:0.3.0-SNAPSHOT'
+    implementation 'dev.nextftc.v2:robot:0.3.0-SNAPSHOT'
 }
