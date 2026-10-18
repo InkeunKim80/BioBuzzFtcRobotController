@@ -22,8 +22,10 @@ public class Drivetrain implements Mechanism {
     private static final double STRAFE_COMPENSATION = 1.1;
 
     public Drivetrain() {
-        frontRight.setDirection(NextMotor.Direction.REVERSE);
-        backRight.setDirection(NextMotor.Direction.REVERSE);
+        frontLeft.setDirection(NextMotor.Direction.REVERSE);
+        frontRight.setDirection(NextMotor.Direction.FORWARD);
+        backLeft.setDirection(NextMotor.Direction.REVERSE);
+        backRight.setDirection(NextMotor.Direction.FORWARD);
     }
 
     public void startDrive(Gamepad gamepad) {
