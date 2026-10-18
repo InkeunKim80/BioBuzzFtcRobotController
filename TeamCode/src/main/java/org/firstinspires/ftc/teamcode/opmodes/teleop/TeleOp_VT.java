@@ -38,6 +38,8 @@ public class TeleOp_VT extends NextOpMode {
         CommandGamepad gp1 = new CommandGamepad(gamepad1);
         CommandGamepad gp2 = new CommandGamepad(gamepad2);
 
+        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
+
         // Controller 1: drive
         robot.drivetrain.startDrive(gamepad1);
 
@@ -96,7 +98,9 @@ public class TeleOp_VT extends NextOpMode {
 
     private Command shoot() {
         return sequential(
+                robot.intake.off(),
                 robot.shooterDual.forward(),
+                waitMs(200),
                 robot.gate.setPosition(GATE_OPEN),
                 waitMs(500),
                 robot.intake.reverse()
