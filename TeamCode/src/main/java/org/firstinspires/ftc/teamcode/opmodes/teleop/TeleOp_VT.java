@@ -64,28 +64,6 @@ public class TeleOp_VT extends NextOpMode {
         // CommandGamepad gp2 slider controls (enable when Slider hardware is ready)
         // gp2.rightBumper().onTrue(robot.slider.returnToStart());
 
-        /*
-        //gp2.a().onTrue(robot.intake.forward());
-        gp2.a().onTrue(robot.shooterDual.forward());
-        gp2.x().onTrue(robot.intake.reverse());
-        gp2.y().onTrue(robot.intake.off());
-        gp2.b().onTrue(robot.shooterDual.off());
-        //gp2.b().onTrue(robot.gate.toggle());
-
-        //gp2.x().onTrue(robot.shooterDual.forward());     
-
-        // Gate toggle on Y
-        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
-        //gp2.a().onTrue(robot.gate.toggle());
-        gp1.leftBumper().onTrue(robot.gate.setPosition(0.25));
-        gp1.rightBumper().onTrue(robot.gate.setPosition(0.9));
-
-        // Gate fine position control: dpad left/right
-        gp2.dpadLeft().onTrue(robot.gate.adjust(-GATE_STEP));
-        gp2.dpadRight().onTrue(robot.gate.adjust(GATE_STEP));
-
-        
-        */
     }
 
     private Command off() {

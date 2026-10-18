@@ -26,6 +26,8 @@ public class AutonBlueHive extends NextOpMode {
     private static final int POLLEN_COUNT = 4;
     private static final long GATE_OPEN_DELAY_MS = 500;
     private static final long SHOT_MS = 600;
+    //private static final double GATE_CLOSED = 0.2;
+    //private static final double GATE_OPEN = 1.0;
 
     private final Robot robot;
     private final Follower follower;
@@ -52,6 +54,7 @@ public class AutonBlueHive extends NextOpMode {
 
     private Path forwardPath() {
         return curve(startPose, controlPose, endPose).linear(startPose, endPose);
+        
     }
 
     private Command autoRoutine() {
