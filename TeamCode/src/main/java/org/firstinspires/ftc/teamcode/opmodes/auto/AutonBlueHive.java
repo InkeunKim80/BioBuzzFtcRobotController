@@ -5,7 +5,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
@@ -73,7 +73,7 @@ public class AutonBlueHive extends NextOpMode {
 
     @Override
     public void start() {
-        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
+        robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
         schedule(autoRoutine());
     }
 

@@ -8,7 +8,6 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
@@ -19,10 +18,6 @@ import dev.nextftc.robot.triggers.CommandGamepad;
 
 @NextTeleop(name = "TeleOp VT", group = "Competition")
 public class TeleOp_VT extends NextOpMode {
-    private static final double GATE_STEP = 0.05;
-    private static final double GATE_CLOSED = 0.2;
-    private static final double GATE_OPEN = 1.0;
-
     private final Robot robot;
 
     public TeleOp_VT(Robot robot) {
@@ -38,7 +33,8 @@ public class TeleOp_VT extends NextOpMode {
         CommandGamepad gp1 = new CommandGamepad(gamepad1);
         CommandGamepad gp2 = new CommandGamepad(gamepad2);
 
-        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
+        robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
+        robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
 
         // Controller 1: drive
         robot.drivetrain.startDrive(gamepad1);
@@ -48,14 +44,14 @@ public class TeleOp_VT extends NextOpMode {
                         .setEnd(end -> DriveCommands.setScalar(1.0))
         );
         // Flower toggle on B
-        robot.flower.setServo(hardwareMap.get(CRServo.class, "flowerServo"));
-        gp1.b().onTrue(robot.flower.toggle());
+        //.flower.setServo(hardwareMap.get(CRServo.class, "flowerServo"));
+        //gp1.b().onTrue(robot.flower.toggle());
 
         // Controller 2: intake + shooter + slider
         gp2.b().onTrue(off());
         gp2.a().onTrue(shoot());
         gp2.x().onTrue(intakeon());
-        gp2.y().onTrue(intakeoff());
+        //gp2.y().onTrue(intakeoff());
 
         gp2.dpadUp().onTrue(robot.shooterDual.increasePower());
         gp2.dpadDown().onTrue(robot.shooterDual.decreasePower());
@@ -70,34 +66,39 @@ public class TeleOp_VT extends NextOpMode {
         return sequential(
                 robot.shooterDual.off(),
                 robot.intake.off(),
-                robot.gate.setPosition(GATE_CLOSED)
+                robot.intakeServo.off(),
+                robot.gate.close()
         );
     }
 
     private Command shoot() {
         return sequential(
                 robot.intake.off(),
-                robot.shooterDual.forward(),
+                //robot.intakeServo.off(),
+                robot.shooterDual.reverse(),
                 waitMs(200),
-                robot.gate.setPosition(GATE_OPEN),
+                robot.gate.open(),
                 waitMs(500),
                 robot.intake.reverse()
+                //robot.intakeServo.forward()
         );
     }
 
     private Command intakeon() {
         return sequential(
-                robot.shooterDual.off(),
+                robot.shooterDual.reverse(),
                 robot.gate.close(),
-                robot.intake.reverse()
+                robot.intake.reverse(),
+                robot.intakeServo.forward()
         );
     }
 
     private Command intakeoff() {
         return sequential(
                 robot.intake.off(),
+                robot.intakeServo.off(),
                 robot.shooterDual.off(),
-                robot.gate.setPosition(GATE_CLOSED)
+                robot.gate.close()
         );
     }
         
@@ -112,7 +113,8 @@ public class TeleOp_VT extends NextOpMode {
         telemetry.addData("Power Multiplier", String.format("%.2f", robot.shooterDual.getPowerMultiplier()));
         telemetry.addData("Intake State", robot.intake.getState());
         telemetry.addData("Intake Power", robot.intake.getPower());
-        telemetry.addData("Gate Position", String.format("%.2f", robot.gate.getPosition()));
+        telemetry.addData("Intake Servo Power", robot.intakeServo.getPower());
+        telemetry.addData("Gate Power", String.format("%.2f", robot.gate.getPower()));
         // telemetry.addData("Slider Position", robot.slider.getCurrentPosition());
         // telemetry.addData("Slider Target", robot.slider.getTargetPosition());
         telemetry.update();
