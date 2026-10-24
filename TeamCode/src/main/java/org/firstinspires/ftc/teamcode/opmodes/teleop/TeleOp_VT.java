@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static com.pedropathing.ivy.commands.Commands.infinite;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
+import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
@@ -71,13 +72,22 @@ public class TeleOp_VT extends NextOpMode {
         );
     }
 
+    private Command intakeontest() {
+        return parallel(
+                robot.shooterDual.reverse(),
+                robot.gate.reverse(),
+                robot.intake.reverse(),
+                robot.intakeServo.reverse()
+        );
+    }
+
     private Command shoot() {
         return sequential(
                 robot.intake.off(),
                 //robot.intakeServo.off(),
                 robot.shooterDual.reverse(),
                 waitMs(200),
-                robot.gate.open(),
+                robot.gate.reverse(),
                 waitMs(500),
                 robot.intake.reverse()
                 //robot.intakeServo.forward()
@@ -87,9 +97,9 @@ public class TeleOp_VT extends NextOpMode {
     private Command intakeon() {
         return sequential(
                 robot.shooterDual.reverse(),
-                robot.gate.close(),
+                robot.gate.reverse(),
                 robot.intake.reverse(),
-                robot.intakeServo.forward()
+                robot.intakeServo.reverse()
         );
     }
 

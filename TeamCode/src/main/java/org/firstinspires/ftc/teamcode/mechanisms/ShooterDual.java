@@ -12,11 +12,11 @@ import org.firstinspires.ftc.teamcode.hardware.MotorConstants;
 public class ShooterDual implements Mechanism {
     private final NextMotor shootMotor1 = new NextMotor(
             "shootMotor1",
-            Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_312_COUNTS_PER_REV)
+            Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_6000_COUNTS_PER_REV)
     );
     private final NextMotor shootMotor2 = new NextMotor(
             "shootMotor2",
-            Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_312_COUNTS_PER_REV)
+            Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_6000_COUNTS_PER_REV)
     );
     private ShooterState shooterState = ShooterState.OFF;
     private double powerMultiplier = 0.35;
