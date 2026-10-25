@@ -77,7 +77,7 @@ public class TeleOp_VT extends NextOpMode {
                 robot.shooterDual.reverse(),
                 robot.gate.reverse(),
                 robot.intake.reverse(),
-                robot.intakeServo.reverse()
+                robot.intakeServo.forward()
         );
     }
 
@@ -87,7 +87,7 @@ public class TeleOp_VT extends NextOpMode {
                 //robot.intakeServo.off(),
                 robot.shooterDual.reverse(),
                 waitMs(200),
-                robot.gate.reverse(),
+                robot.gate.open(),
                 waitMs(500),
                 robot.intake.reverse()
                 //robot.intakeServo.forward()
@@ -97,9 +97,9 @@ public class TeleOp_VT extends NextOpMode {
     private Command intakeon() {
         return sequential(
                 robot.shooterDual.reverse(),
-                robot.gate.reverse(),
+                robot.gate.open(),
                 robot.intake.reverse(),
-                robot.intakeServo.reverse()
+                robot.intakeServo.forward()
         );
     }
 
