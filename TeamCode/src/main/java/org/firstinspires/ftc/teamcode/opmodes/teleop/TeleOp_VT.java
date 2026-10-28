@@ -95,10 +95,10 @@ public class TeleOp_VT extends NextOpMode {
     @Override
     public void periodic() {
         telemetry.addData("Shooter State", robot.shooterDual.getState());
-        telemetry.addData("Shooter RPM 1", robot.shooterDual.getRPM1());
-        telemetry.addData("Shooter RPM 2", robot.shooterDual.getRPM2());
-        telemetry.addData("Shooter Power 1", robot.shooterDual.getPower1());
-        telemetry.addData("Shooter Power 2", robot.shooterDual.getPower2());
+        telemetry.addData("Shooter Current RPM", String.format("%.0f", robot.shooterDual.getRPM1()));
+        telemetry.addData("Shooter Target RPM", String.format("%.0f", robot.shooterDual.getTargetRpm()));
+        telemetry.addData("RPM Control", robot.shooterDual.isRpmControlEnabled() ? "ON" : "OFF");
+        telemetry.addData("Shooter Power", robot.shooterDual.getPower1());
         telemetry.addData("Power Multiplier", String.format("%.2f", robot.shooterDual.getPowerMultiplier()));
         telemetry.addData("Intake State", robot.intake.getState());
         telemetry.addData("Intake Power", robot.intake.getPower());
