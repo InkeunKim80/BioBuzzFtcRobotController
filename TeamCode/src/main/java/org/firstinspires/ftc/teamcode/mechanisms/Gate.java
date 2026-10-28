@@ -7,7 +7,7 @@ import dev.nextftc.robot.Mechanism;
 
 public class Gate implements Mechanism {
     // Continuous servo power (flip sign if it spins the wrong way)
-    private static final double REVERSE_POWER = -1.0;
+    private static final double REVERSE_POWER = 1.0;
     private static final double STOP_POWER = 0.0;
 
     private CRServo servo;

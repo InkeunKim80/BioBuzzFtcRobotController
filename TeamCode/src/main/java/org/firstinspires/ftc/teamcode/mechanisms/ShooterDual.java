@@ -19,7 +19,7 @@ public class ShooterDual implements Mechanism {
             Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_6000_COUNTS_PER_REV)
     );
     private ShooterState shooterState = ShooterState.OFF;
-    private double powerMultiplier = 0.35;
+    private double powerMultiplier = 0.55;
 
     public enum ShooterState {
         FORWARD,
