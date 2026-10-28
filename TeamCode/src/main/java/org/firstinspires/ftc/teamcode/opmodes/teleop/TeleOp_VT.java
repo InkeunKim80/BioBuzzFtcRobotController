@@ -53,6 +53,8 @@ public class TeleOp_VT extends NextOpMode {
         gp2.a().onTrue(shoot());
         gp2.x().onTrue(intakeon());
         //gp2.y().onTrue(intakeoff());
+        gp2.y().onTrue(robot.gate.run());
+        gp2.y().onFalse(robot.gate.stop());
 
         gp2.dpadUp().onTrue(robot.shooterDual.increasePower());
         gp2.dpadDown().onTrue(robot.shooterDual.decreasePower());
@@ -64,51 +66,28 @@ public class TeleOp_VT extends NextOpMode {
     }
 
     private Command off() {
-        return sequential(
+        return parallel(
                 robot.shooterDual.off(),
                 robot.intake.off(),
                 robot.intakeServo.off(),
-                robot.gate.close()
-        );
-    }
-
-    private Command intakeontest() {
-        return parallel(
-                robot.shooterDual.reverse(),
-                robot.gate.reverse(),
-                robot.intake.reverse(),
-                robot.intakeServo.forward()
+                robot.gate.stop()
         );
     }
 
     private Command shoot() {
         return sequential(
-                robot.intake.off(),
-                //robot.intakeServo.off(),
                 robot.shooterDual.reverse(),
-                waitMs(200),
-                robot.gate.open(),
                 waitMs(500),
-                robot.intake.reverse()
-                //robot.intakeServo.forward()
+                robot.intake.reverse(),
+                robot.intakeServo.forward()
         );
     }
 
     private Command intakeon() {
         return sequential(
                 robot.shooterDual.reverse(),
-                robot.gate.open(),
                 robot.intake.reverse(),
                 robot.intakeServo.forward()
-        );
-    }
-
-    private Command intakeoff() {
-        return sequential(
-                robot.intake.off(),
-                robot.intakeServo.off(),
-                robot.shooterDual.off(),
-                robot.gate.close()
         );
     }
         

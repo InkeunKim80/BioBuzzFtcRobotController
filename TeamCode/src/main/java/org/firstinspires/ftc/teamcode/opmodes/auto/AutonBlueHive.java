@@ -60,12 +60,12 @@ public class AutonBlueHive extends NextOpMode {
     private Command autoRoutine() {
         return sequential(
                 robot.shooterDual.reverse(),
-                robot.intake.reverse(),
                 waitMs(GATE_OPEN_DELAY_MS),
-                robot.gate.open(),
+                robot.gate.run(),
+                robot.intake.reverse(),                
                 waitMs(SHOT_MS * POLLEN_COUNT),
                 robot.intake.off(),
-                robot.gate.close(),
+                robot.gate.stop(),
                 robot.shooterDual.off(),
                 follow(follower, forwardPath())
         );

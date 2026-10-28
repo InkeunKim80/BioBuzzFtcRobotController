@@ -7,7 +7,6 @@ import dev.nextftc.robot.Mechanism;
 
 public class Gate implements Mechanism {
     // Continuous servo power (flip sign if it spins the wrong way)
-    private static final double OPEN_POWER = 1.0;
     private static final double REVERSE_POWER = -1.0;
     private static final double STOP_POWER = 0.0;
 
@@ -18,20 +17,12 @@ public class Gate implements Mechanism {
         servo.setPower(STOP_POWER);
     }
 
-    public Command open() {
-        return instant(() -> servo.setPower(OPEN_POWER));
-    }
-
-    public Command close() {
-        return instant(() -> servo.setPower(STOP_POWER));
-    }
-
-    public Command reverse() {
+    public Command run() {
         return instant(() -> servo.setPower(REVERSE_POWER));
     }
 
-    public Command toggle() {
-        return instant(() -> servo.setPower(servo.getPower() != STOP_POWER ? STOP_POWER : OPEN_POWER));
+    public Command stop() {
+        return instant(() -> servo.setPower(STOP_POWER));
     }
 
     public Command setPower(double power) {

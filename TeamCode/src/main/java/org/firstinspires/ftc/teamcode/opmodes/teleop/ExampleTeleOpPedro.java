@@ -75,7 +75,7 @@ public class ExampleTeleOpPedro extends NextOpMode {
         gp2.x().onTrue(robot.shooterDual.reverse());
 
         // Gate toggle on Y
-        gp2.y().onTrue(robot.gate.toggle());
+        //gp2.y().onTrue(robot.gate.toggle());
     }
 
     // Called repeatedly while the OpMode is actively running
