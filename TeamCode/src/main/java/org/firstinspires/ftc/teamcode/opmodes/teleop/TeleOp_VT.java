@@ -9,6 +9,7 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
@@ -36,6 +37,7 @@ public class TeleOp_VT extends NextOpMode {
 
         robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
         robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
+        robot.flower.setServo(hardwareMap.get(Servo.class, "flowerServo"));
 
         // Controller 1: drive
         robot.drivetrain.startDrive(gamepad1);
@@ -45,8 +47,9 @@ public class TeleOp_VT extends NextOpMode {
                         .setEnd(end -> DriveCommands.setScalar(1.0))
         );
         // Flower toggle on B
-        //.flower.setServo(hardwareMap.get(CRServo.class, "flowerServo"));
-        //gp1.b().onTrue(robot.flower.toggle());
+        
+        gp1.b().onTrue(robot.flower.startSweep());
+        gp1.b().onFalse(robot.flower.stopSweep());
 
         // Controller 2: intake + shooter + slider
         gp2.b().onTrue(off());
