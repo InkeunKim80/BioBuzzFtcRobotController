@@ -15,6 +15,7 @@ import dev.nextftc.robot.opmode.NextAutonomous;
 import dev.nextftc.robot.opmode.NextOpMode;
 
 import static com.pedropathing.api.Paths.curve;
+import static com.pedropathing.api.Paths.line;
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.sequential;
@@ -35,9 +36,11 @@ public class AutonRedHive extends NextOpMode {
     // Pedro coordinates are in inches.
     private final Pose startPose = poseFactory.of(59, 8, 90);
 
+    private final Pose shootPose = poseFactory.of(59, 23, 90);
+
     private final Pose controlPose = poseFactory.of(13, 54, 0);
 
-    private final Pose endPose = poseFactory.of(17, 120, 270);
+    private final Pose endPose = poseFactory.of(15, 120, 270);
 
     public AutonRedHive(Robot robot) {
         super(robot);
@@ -50,21 +53,26 @@ public class AutonRedHive extends NextOpMode {
         follower.update();
     }
 
-    private Path forwardPath() {
-        return curve(startPose, controlPose, endPose).linear(startPose, endPose);
+    private Path firstPath() {
+        return line(startPose, shootPose).linear(startPose, shootPose);
+    }
+
+    private Path secondPath() {
+        return curve(shootPose, controlPose, endPose).linear(shootPose, endPose);
     }
 
     private Command autoRoutine() {
         return sequential(
+                follow(follower, firstPath()),
                 robot.shooterDual.reverse(),
+                robot.intake.reverse(),
                 waitMs(GATE_OPEN_DELAY_MS),
                 robot.gate.run(),
-                robot.intake.reverse(),                
                 waitMs(SHOT_MS * POLLEN_COUNT),
                 robot.intake.off(),
                 robot.gate.stop(),
                 robot.shooterDual.off(),
-                follow(follower, forwardPath())
+                follow(follower, secondPath())
         );
     }
 

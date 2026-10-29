@@ -35,7 +35,9 @@ public class AutonRedHiveFar extends NextOpMode {
     // Pedro coordinates are in inches.
     private final Pose startPose = poseFactory.of(32, 8, 90);
 
-    private final Pose endPose = poseFactory.of(17, 120, 270);
+    private final Pose shootPose = poseFactory.of(38, 23, 45);
+
+    private final Pose endPose = poseFactory.of(15, 120, 270);
 
     public AutonRedHiveFar(Robot robot) {
         super(robot);
@@ -48,21 +50,26 @@ public class AutonRedHiveFar extends NextOpMode {
         follower.update();
     }
 
-    private Path forwardPath() {
-        return line(startPose, endPose).linear(startPose, endPose);
+    private Path firstPath() {
+        return line(startPose, shootPose).linear(startPose, shootPose);
+    }
+
+    private Path secondPath() {
+        return line(shootPose, endPose).linear(shootPose, endPose);
     }
 
     private Command autoRoutine() {
         return sequential(
+                follow(follower, firstPath()),
                 robot.shooterDual.reverse(),
+                robot.intake.reverse(),
                 waitMs(GATE_OPEN_DELAY_MS),
                 robot.gate.run(),
-                robot.intake.reverse(),                
                 waitMs(SHOT_MS * POLLEN_COUNT),
                 robot.intake.off(),
                 robot.gate.stop(),
                 robot.shooterDual.off(),
-                follow(follower, forwardPath())
+                follow(follower, secondPath())
         );
     }
 
