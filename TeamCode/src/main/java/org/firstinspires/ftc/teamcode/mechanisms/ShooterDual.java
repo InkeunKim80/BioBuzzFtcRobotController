@@ -12,14 +12,14 @@ import org.firstinspires.ftc.teamcode.hardware.MotorConstants;
 public class ShooterDual implements Mechanism {
     private final NextMotor shootMotor1 = new NextMotor(
             "shootMotor1",
-            Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_312_COUNTS_PER_REV)
-    );
-    private final NextMotor shootMotor2 = new NextMotor(
-            "shootMotor2",
-            Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_312_COUNTS_PER_REV)
+            Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_6000_COUNTS_PER_REV)
     );
     private ShooterState shooterState = ShooterState.OFF;
-    private double powerMultiplier = 0.3;
+    private double powerMultiplier = 0.55;
+
+    private boolean rpmControl = true;
+    private double targetRpm = 2400;
+    private double integralError = 0;
 
     public enum ShooterState {
         FORWARD,
@@ -31,14 +31,20 @@ public class ShooterDual implements Mechanism {
     private static final double REVERSE_POWER = -1.0;
     private static final double OFF_POWER = 0.0;
 
+    // Feedforward: about 0.55 power at 2400 RPM
+    private static final double KFF = 0.55 / 2400.0;
+    private static final double KP = 0.0005;
+    private static final double KI = 0.0001;
+    private static final double MAX_INTEGRAL = 3000.0;
+
     public ShooterDual() {
         shootMotor1.setDirection(NextMotor.Direction.REVERSE);
-        shootMotor2.setDirection(NextMotor.Direction.FORWARD);
     }
 
     public Command setState(ShooterState shooterState) {
         return instant(() -> {
             this.shooterState = shooterState;
+            this.integralError = 0;
         });
     }
 
@@ -62,16 +68,8 @@ public class ShooterDual implements Mechanism {
         return shootMotor1.getEncoderVelocity().into(RotationsPerMinute);
     }
 
-    public double getRPM2(){
-        return shootMotor2.getEncoderVelocity().into(RotationsPerMinute);
-    }
-
     public double getPower1(){
         return shootMotor1.getThrottle();
-    }
-
-    public double getPower2(){
-        return shootMotor2.getThrottle();
     }
 
     public void setPowerMultiplier(double value) {
@@ -80,6 +78,28 @@ public class ShooterDual implements Mechanism {
 
     public double getPowerMultiplier() {
         return powerMultiplier;
+    }
+
+    public void enableRpmControl() {
+        this.rpmControl = true;
+        this.integralError = 0;
+    }
+
+    public void disableRpmControl() {
+        this.rpmControl = false;
+    }
+
+    public boolean isRpmControlEnabled() {
+        return rpmControl;
+    }
+
+    public void setTargetRpm(double rpm) {
+        this.targetRpm = Math.abs(rpm);
+        this.integralError = 0;
+    }
+
+    public double getTargetRpm() {
+        return targetRpm;
     }
 
     public Command increasePower() {
@@ -98,20 +118,24 @@ public class ShooterDual implements Mechanism {
         return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.01));
     }
 
+    private double rpmThrottle() {
+        double error = targetRpm - Math.abs(getRPM1());
+        integralError = Math.max(-MAX_INTEGRAL, Math.min(MAX_INTEGRAL, integralError + error));
+        double throttle = KFF * targetRpm + KP * error + KI * integralError;
+        return Math.max(0.0, Math.min(1.0, throttle));
+    }
+
     @Override
     public void periodic() {
         switch (shooterState) {
             case FORWARD:
-                shootMotor1.setThrottle(FORWARD_POWER * powerMultiplier);
-                shootMotor2.setThrottle(FORWARD_POWER * powerMultiplier);
+                shootMotor1.setThrottle(rpmControl ? rpmThrottle() : FORWARD_POWER * powerMultiplier);
                 break;
             case REVERSE:
-                shootMotor1.setThrottle(REVERSE_POWER * powerMultiplier);
-                shootMotor2.setThrottle(REVERSE_POWER * powerMultiplier);
+                shootMotor1.setThrottle(rpmControl ? -rpmThrottle() : REVERSE_POWER * powerMultiplier);
                 break;
             case OFF:
                 shootMotor1.setThrottle(OFF_POWER);
-                shootMotor2.setThrottle(OFF_POWER);
                 break;
         }
     }

@@ -5,7 +5,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
@@ -35,7 +35,9 @@ public class AutonRedHiveFar extends NextOpMode {
     // Pedro coordinates are in inches.
     private final Pose startPose = poseFactory.of(32, 8, 90);
 
-    private final Pose endPose = poseFactory.of(17, 120, 270);
+    private final Pose shootPose = poseFactory.of(38, 23, 45);
+
+    private final Pose endPose = poseFactory.of(15, 120, 270);
 
     public AutonRedHiveFar(Robot robot) {
         super(robot);
@@ -48,27 +50,32 @@ public class AutonRedHiveFar extends NextOpMode {
         follower.update();
     }
 
-    private Path forwardPath() {
-        return line(startPose, endPose).linear(startPose, endPose);
+    private Path firstPath() {
+        return line(startPose, shootPose).linear(startPose, shootPose);
+    }
+
+    private Path secondPath() {
+        return line(shootPose, endPose).linear(shootPose, endPose);
     }
 
     private Command autoRoutine() {
         return sequential(
+                follow(follower, firstPath()),
                 robot.shooterDual.reverse(),
                 robot.intake.reverse(),
                 waitMs(GATE_OPEN_DELAY_MS),
-                robot.gate.open(),
+                robot.gate.run(),
                 waitMs(SHOT_MS * POLLEN_COUNT),
                 robot.intake.off(),
-                robot.gate.close(),
+                robot.gate.stop(),
                 robot.shooterDual.off(),
-                follow(follower, forwardPath())
+                follow(follower, secondPath())
         );
     }
 
     @Override
     public void start() {
-        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
+        robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
         schedule(autoRoutine());
     }
 

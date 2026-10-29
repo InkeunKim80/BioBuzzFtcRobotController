@@ -1,46 +1,39 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
 import com.pedropathing.ivy.Command;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import dev.nextftc.robot.Mechanism;
 
 public class Gate implements Mechanism {
-    private static final double OPEN_POSITION = 1.0;
-    private static final double CLOSED_POSITION = 0.0;
+    // Continuous servo power (flip sign if it spins the wrong way)
+    private static final double REVERSE_POWER = 1.0;
+    private static final double STOP_POWER = 0.0;
 
-    private Servo servo;
+    private CRServo servo;
 
-    public void setServo(Servo servo) {
+    public void setServo(CRServo servo) {
         this.servo = servo;
-        servo.setPosition(CLOSED_POSITION);
+        servo.setPower(STOP_POWER);
     }
 
-    public Command open() {
-        return instant(() -> servo.setPosition(OPEN_POSITION));
+    public Command run() {
+        return instant(() -> servo.setPower(REVERSE_POWER));
     }
 
-    public Command close() {
-        return instant(() -> servo.setPosition(CLOSED_POSITION));
+    public Command stop() {
+        return instant(() -> servo.setPower(STOP_POWER));
     }
 
-    public Command toggle() {
-        return instant(() -> servo.setPosition(servo.getPosition() > 0.5 ? CLOSED_POSITION : OPEN_POSITION));
+    public Command setPower(double power) {
+        return instant(() -> servo.setPower(clamp(power)));
     }
 
-    public Command setPosition(double position) {
-        return instant(() -> servo.setPosition(clamp(position)));
+    private static double clamp(double power) {
+        return Math.max(-1.0, Math.min(1.0, power));
     }
 
-    public Command adjust(double delta) {
-        return instant(() -> servo.setPosition(clamp(servo.getPosition() + delta)));
-    }
-
-    private static double clamp(double position) {
-        return Math.max(0.0, Math.min(1.0, position));
-    }
-
-    public double getPosition() {
-        return servo != null ? servo.getPosition() : CLOSED_POSITION;
+    public double getPower() {
+        return servo != null ? servo.getPower() : STOP_POWER;
     }
 }

@@ -85,7 +85,6 @@ public class TeleOp_VT_FC extends NextOpMode {
 
         telemetry.addData("Shooter State", robot.shooterDual.getState());
         telemetry.addData("Shooter RPM 1", robot.shooterDual.getRPM1());
-        telemetry.addData("Shooter RPM 2", robot.shooterDual.getRPM2());
         telemetry.addData("Power Multiplier", "%.2f", robot.shooterDual.getPowerMultiplier());
         telemetry.addData("Intake State", robot.intake.getState());
         telemetry.update();

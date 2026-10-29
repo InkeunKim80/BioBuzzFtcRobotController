@@ -5,7 +5,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
@@ -15,6 +15,7 @@ import dev.nextftc.robot.opmode.NextAutonomous;
 import dev.nextftc.robot.opmode.NextOpMode;
 
 import static com.pedropathing.api.Paths.curve;
+import static com.pedropathing.api.Paths.line;
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.sequential;
@@ -35,9 +36,11 @@ public class AutonBlueHive extends NextOpMode {
     // Pedro coordinates are in inches.
     private final Pose startPose = poseFactory.of(84, 133, 270);
 
+    private final Pose shootPose = poseFactory.of(84, 119, 270);
+
     private final Pose controlPose = poseFactory.of(129, 102, 0);
 
-    private final Pose endPose = poseFactory.of(126, 16, 90);
+    private final Pose endPose = poseFactory.of(126, 20, 90);
 
     public AutonBlueHive(Robot robot) {
         super(robot);
@@ -50,27 +53,32 @@ public class AutonBlueHive extends NextOpMode {
         follower.update();
     }
 
-    private Path forwardPath() {
-        return curve(startPose, controlPose, endPose).linear(startPose, endPose);
+    private Path firstPath() {
+        return line(startPose, shootPose).linear(startPose, shootPose);
+    }
+
+    private Path secondPath() {
+        return curve(shootPose, controlPose, endPose).linear(shootPose, endPose);
     }
 
     private Command autoRoutine() {
         return sequential(
+                follow(follower, firstPath()),
                 robot.shooterDual.reverse(),
                 robot.intake.reverse(),
                 waitMs(GATE_OPEN_DELAY_MS),
-                robot.gate.open(),
+                robot.gate.run(),
                 waitMs(SHOT_MS * POLLEN_COUNT),
                 robot.intake.off(),
-                robot.gate.close(),
+                robot.gate.stop(),
                 robot.shooterDual.off(),
-                follow(follower, forwardPath())
+                follow(follower, secondPath())
         );
     }
 
     @Override
     public void start() {
-        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
+        robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
         schedule(autoRoutine());
     }
 
