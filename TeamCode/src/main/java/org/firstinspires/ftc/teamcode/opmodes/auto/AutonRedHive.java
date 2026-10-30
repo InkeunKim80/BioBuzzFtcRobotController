@@ -65,10 +65,12 @@ public class AutonRedHive extends NextOpMode {
         return sequential(
                 follow(follower, firstPath()),
                 robot.shooterDual.reverse(),
+                robot.intakeServo.forward(),
                 robot.intake.reverse(),
                 waitMs(GATE_OPEN_DELAY_MS),
                 robot.gate.run(),
                 waitMs(SHOT_MS * POLLEN_COUNT),
+                robot.intakeServo.off(),
                 robot.intake.off(),
                 robot.gate.stop(),
                 robot.shooterDual.off(),
@@ -79,6 +81,7 @@ public class AutonRedHive extends NextOpMode {
     @Override
     public void start() {
         robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
+        robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
         schedule(autoRoutine());
     }
 

@@ -33,8 +33,8 @@ public class ShooterDual implements Mechanism {
 
     // Feedforward: about 0.55 power at 2400 RPM
     private static final double KFF = 0.55 / 2400.0;
-    private static final double KP = 0.0005;
-    private static final double KI = 0.0001;
+    private double kp = 0.0005;
+    private double ki = 0.0001;
     private static final double MAX_INTEGRAL = 3000.0;
 
     public ShooterDual() {
@@ -102,6 +102,24 @@ public class ShooterDual implements Mechanism {
         return targetRpm;
     }
 
+    public void setKp(double value) {
+        this.kp = value;
+        this.integralError = 0;
+    }
+
+    public double getKp() {
+        return kp;
+    }
+
+    public void setKi(double value) {
+        this.ki = value;
+        this.integralError = 0;
+    }
+
+    public double getKi() {
+        return ki;
+    }
+
     public Command increasePower() {
         return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.01));
     }
@@ -121,7 +139,7 @@ public class ShooterDual implements Mechanism {
     private double rpmThrottle() {
         double error = targetRpm - Math.abs(getRPM1());
         integralError = Math.max(-MAX_INTEGRAL, Math.min(MAX_INTEGRAL, integralError + error));
-        double throttle = KFF * targetRpm + KP * error + KI * integralError;
+        double throttle = KFF * targetRpm + kp * error + ki * integralError;
         return Math.max(0.0, Math.min(1.0, throttle));
     }
 
