@@ -36,7 +36,7 @@ public class AutonRedHive extends NextOpMode {
     // Pedro coordinates are in inches.
     private final Pose startPose = poseFactory.of(59, 8, 90);
 
-    private final Pose shootPose = poseFactory.of(59, 23, 90);
+    private final Pose shootPose = poseFactory.of(59, 11, 90);
 
     private final Pose controlPose = poseFactory.of(13, 54, 0);
 
