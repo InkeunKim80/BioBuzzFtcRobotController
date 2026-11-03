@@ -15,10 +15,10 @@ public class ShooterDual implements Mechanism {
             Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_6000_COUNTS_PER_REV)
     );
     private ShooterState shooterState = ShooterState.OFF;
-    private double powerMultiplier = 0.55;
+    private double powerMultiplier = 0.50;
 
     private boolean rpmControl = true;
-    private double targetRpm = 2400;
+    private double targetRpm = 2300;
     private double integralError = 0;
 
     public enum ShooterState {
@@ -32,7 +32,7 @@ public class ShooterDual implements Mechanism {
     private static final double OFF_POWER = 0.0;
 
     // Feedforward: about 0.55 power at 2400 RPM
-    private static final double KFF = 0.55 / 2400.0;
+    private static final double KFF = 0.5 / 2300.0;
     private double kp = 0.0005;
     private double ki = 0.0001;
     private static final double MAX_INTEGRAL = 3000.0;
