@@ -18,7 +18,7 @@ public class ShooterDual implements Mechanism {
     private double powerMultiplier = 0.50;
 
     private boolean rpmControl = true;
-    private double targetRpm = 2300;
+    private double targetRpm = 2400;
     private double integralError = 0;
 
     public enum ShooterState {
@@ -32,8 +32,8 @@ public class ShooterDual implements Mechanism {
     private static final double OFF_POWER = 0.0;
 
     // Feedforward: about 0.55 power at 2400 RPM
-    private static final double KFF = 0.5 / 2300.0;
-    private double kp = 0.0005;
+    private static final double KFF = 0.5 / 2400.0;
+    private double kp = 0.0006;
     private double ki = 0.0001;
     private static final double MAX_INTEGRAL = 3000.0;
 
