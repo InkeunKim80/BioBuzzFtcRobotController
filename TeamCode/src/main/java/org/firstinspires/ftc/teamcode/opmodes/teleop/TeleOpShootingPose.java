@@ -14,10 +14,10 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.mechanisms.IndicatorLight;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -30,7 +30,6 @@ import dev.nextftc.robot.triggers.CommandGamepad;
 public class TeleOpShootingPose extends NextOpMode {
     private final Robot robot;
     private Follower follower;
-    private RevBlinkinLedDriver blinkin;
     private boolean gamepad1Locked = false;
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
@@ -70,8 +69,7 @@ public class TeleOpShootingPose extends NextOpMode {
         robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
         robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
         robot.flower.setServo(hardwareMap.get(Servo.class, "flowerServo"));
-        blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
 
         // Controller 1: drive, shooting position correction, flower
         robot.drivetrain.startDrive(gamepad1);
@@ -104,10 +102,10 @@ public class TeleOpShootingPose extends NextOpMode {
         schedule(sequential(
                 instant(() -> robot.drivetrain.stopDrive()),
                 follow(follower, line(current, target).linear(current, target)),
-                instant(() -> blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN)),
+                robot.indicator.set(IndicatorLight.GREEN),
                 instant(() -> gamepad1Locked = true),
                 waitMs(3000),
-                instant(() -> blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK)),
+                robot.indicator.set(IndicatorLight.OFF),
                 instant(() -> {
                     gamepad1Locked = false;
                     robot.drivetrain.startDrive(gamepad1);
