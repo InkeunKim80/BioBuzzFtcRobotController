@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Scheduler;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -10,7 +9,6 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
 
-@Disabled
 @NextTeleop(name="Example TeleOp FC", group = "Examples")
 public class ExampleTeleOpFC extends NextOpMode {
     private final Robot robot;
@@ -40,8 +38,6 @@ public class ExampleTeleOpFC extends NextOpMode {
     // Called exactly once after the PLAY button is pressed.
     @Override
     public void start() {
-        robot.drivetrain.startDrive(gamepad1);
-
         robot.drivetrain.startDriveFieldCentric(
                 gamepad1,
                 () -> follower.pose().heading()

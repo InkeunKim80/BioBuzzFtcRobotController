@@ -5,6 +5,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
@@ -17,6 +18,7 @@ import dev.nextftc.robot.opmode.NextOpMode;
 import static com.pedropathing.api.Paths.curve;
 import static com.pedropathing.api.Paths.line;
 import static com.pedropathing.ivy.Scheduler.schedule;
+import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
@@ -27,9 +29,11 @@ public class AutonRedHive extends NextOpMode {
     private static final int POLLEN_COUNT = 4;
     private static final long GATE_OPEN_DELAY_MS = 500;
     private static final long SHOT_MS = 600;
+    private static final long LED_ON_AFTER_PARK_MS = 3000;
 
     private final Robot robot;
     private final Follower follower;
+    private RevBlinkinLedDriver blinkin;
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
@@ -64,6 +68,7 @@ public class AutonRedHive extends NextOpMode {
     private Command autoRoutine() {
         return sequential(
                 follow(follower, firstPath()),
+                instant(() -> blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW)),
                 robot.shooterDual.reverse(),
                 robot.intakeServo.forward(),
                 robot.intake.reverse(),
@@ -74,7 +79,11 @@ public class AutonRedHive extends NextOpMode {
                 robot.intake.off(),
                 robot.gate.stop(),
                 robot.shooterDual.off(),
-                follow(follower, secondPath())
+                instant(() -> blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK)),
+                follow(follower, secondPath()),
+                instant(() -> blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN)),
+                waitMs(LED_ON_AFTER_PARK_MS),
+                instant(() -> blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK))
         );
     }
 
@@ -82,6 +91,8 @@ public class AutonRedHive extends NextOpMode {
     public void start() {
         robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
         robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
+        blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
         schedule(autoRoutine());
     }
 

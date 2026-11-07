@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static com.pedropathing.ivy.commands.Commands.infinite;
+import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
@@ -8,9 +9,11 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.mechanisms.ShooterDual;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import dev.nextftc.robot.drive.DriveCommands;
@@ -21,6 +24,9 @@ import dev.nextftc.robot.triggers.CommandGamepad;
 @NextTeleop(name = "TeleOp VT", group = "Competition")
 public class TeleOp_VT extends NextOpMode {
     private final Robot robot;
+    private RevBlinkinLedDriver blinkin;
+    private boolean yellowHeld = false;
+    private RevBlinkinLedDriver.BlinkinPattern ledPattern;
 
     public TeleOp_VT(Robot robot) {
         super(robot);
@@ -38,6 +44,9 @@ public class TeleOp_VT extends NextOpMode {
         robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
         robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
         robot.flower.setServo(hardwareMap.get(Servo.class, "flowerServo"));
+        blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        ledPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
 
         // Controller 1: drive
         robot.drivetrain.startDrive(gamepad1);
@@ -58,6 +67,8 @@ public class TeleOp_VT extends NextOpMode {
         //gp2.y().onTrue(intakeoff());
         gp2.y().onTrue(robot.gate.run());
         gp2.y().onFalse(robot.gate.stop());
+        gp2.y().onTrue(instant(() -> { yellowHeld = true; }));
+        gp2.y().onFalse(instant(() -> { yellowHeld = false; }));
 
         gp2.dpadUp().onTrue(robot.shooterDual.increasePower());
         gp2.dpadDown().onTrue(robot.shooterDual.decreasePower());
@@ -97,6 +108,17 @@ public class TeleOp_VT extends NextOpMode {
 
     @Override
     public void periodic() {
+        boolean rpmDrop = robot.shooterDual.getState() != ShooterDual.ShooterState.OFF
+                && robot.shooterDual.isRpmControlEnabled()
+                && robot.shooterDual.getRPM1() < robot.shooterDual.getTargetRpm() - 70;
+        RevBlinkinLedDriver.BlinkinPattern pattern = rpmDrop
+                ? RevBlinkinLedDriver.BlinkinPattern.RED
+                : (yellowHeld ? RevBlinkinLedDriver.BlinkinPattern.YELLOW : RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        if (pattern != ledPattern) {
+            blinkin.setPattern(pattern);
+            ledPattern = pattern;
+        }
+
         telemetry.addData("Shooter State", robot.shooterDual.getState());
         telemetry.addData("Shooter Current RPM", String.format("%.0f", robot.shooterDual.getRPM1()));
         telemetry.addData("Shooter Target RPM", String.format("%.0f", robot.shooterDual.getTargetRpm()));

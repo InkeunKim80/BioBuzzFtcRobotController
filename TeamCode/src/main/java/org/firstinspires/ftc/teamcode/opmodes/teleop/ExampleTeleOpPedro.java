@@ -4,6 +4,7 @@ import static com.pedropathing.ivy.commands.Commands.infinite;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Scheduler;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.CRServo;
 
@@ -16,6 +17,7 @@ import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
 import dev.nextftc.robot.triggers.CommandGamepad;
 
+@Disabled
 @NextTeleop(name="Example TeleOp Pedro", group = "Examples")
 public class ExampleTeleOpPedro extends NextOpMode {
     private final Robot robot;

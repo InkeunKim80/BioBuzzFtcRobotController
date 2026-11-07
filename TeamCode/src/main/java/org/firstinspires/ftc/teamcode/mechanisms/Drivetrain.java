@@ -28,8 +28,17 @@ public class Drivetrain implements Mechanism {
         backRight.setDirection(NextMotor.Direction.FORWARD);
     }
 
+    private Command driveCommand;
+
     public void startDrive(Gamepad gamepad) {
-        DriveCommands.mecanumDrive(frontLeft, frontRight, backLeft, backRight, gamepad, new MecanumKinematics(STRAFE_COMPENSATION)).schedule();
+        driveCommand = DriveCommands.mecanumDrive(frontLeft, frontRight, backLeft, backRight, gamepad, new MecanumKinematics(STRAFE_COMPENSATION));
+        driveCommand.schedule();
+    }
+
+    public void stopDrive() {
+        if (driveCommand != null) {
+            driveCommand.cancel();
+        }
     }
 
     public void startDriveFieldCentric(Gamepad gamepad, Supplier<Double> heading) {

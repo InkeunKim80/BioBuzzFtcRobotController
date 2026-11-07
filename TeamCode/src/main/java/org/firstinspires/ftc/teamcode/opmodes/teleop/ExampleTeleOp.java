@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import static com.pedropathing.ivy.commands.Commands.infinite;
 
 import com.pedropathing.ivy.Scheduler;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
@@ -11,6 +12,7 @@ import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
 import dev.nextftc.robot.triggers.CommandGamepad;
 
+@Disabled
 @NextTeleop(name="Example TeleOp", group = "Examples")
 public class ExampleTeleOp extends NextOpMode {
     private final Robot robot;
