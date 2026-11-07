@@ -108,8 +108,8 @@ public class TeleOp_VT extends NextOpMode {
     public void periodic() {
         boolean rpmDrop = robot.shooterDual.getState() != ShooterDual.ShooterState.OFF
                 && robot.shooterDual.isRpmControlEnabled()
-                && robot.shooterDual.getRPM1() < robot.shooterDual.getTargetRpm() - 70;
-        double color = rpmDrop ? IndicatorLight.RED : (yellowHeld ? IndicatorLight.YELLOW : IndicatorLight.OFF);
+                && Math.abs(robot.shooterDual.getRPM1()) < robot.shooterDual.getTargetRpm() - 70;
+        double color = yellowHeld ? IndicatorLight.YELLOW : (rpmDrop ? IndicatorLight.RED : IndicatorLight.OFF);
         if (color != ledColor) {
             robot.indicator.setColor(color);
             ledColor = color;
