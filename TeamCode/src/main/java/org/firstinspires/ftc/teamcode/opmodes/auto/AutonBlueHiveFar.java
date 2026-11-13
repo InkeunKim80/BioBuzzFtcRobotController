@@ -38,9 +38,11 @@ public class AutonBlueHiveFar extends NextOpMode {
     // Pedro coordinates are in inches.
     private final Pose startPose = poseFactory.of(107, 133, 270);
 
-    private final Pose shootPose = poseFactory.of(107, 126, 195);
+    private final Pose shootPose = poseFactory.of(107, 126, 235);
 
-    private final Pose endPose = poseFactory.of(129, 20, 90);
+    private final Pose defaultEndPose = poseFactory.of(129, 20, 90);
+    private final Pose alternateEndPose = poseFactory.of(126, 50, 90);
+    private Pose endPose = defaultEndPose;
 
     public AutonBlueHiveFar(Robot robot) {
         super(robot);
@@ -81,6 +83,18 @@ public class AutonBlueHiveFar extends NextOpMode {
                 waitMs(LED_ON_AFTER_PARK_MS),
                 robot.indicator.set(IndicatorLight.OFF)
         );
+    }
+
+    @Override
+    public void disabledPeriodic() {
+        if (gamepad1.right_bumper) {
+            endPose = alternateEndPose;
+        } else if (gamepad1.left_bumper) {
+            endPose = defaultEndPose;
+        }
+        telemetry.addData("End Pose", endPose == alternateEndPose ? "Alternate (126, 50, 90)" : "Default (129, 20, 90)");
+        telemetry.addData("Select", "LB: default, RB: alternate");
+        telemetry.update();
     }
 
     @Override
