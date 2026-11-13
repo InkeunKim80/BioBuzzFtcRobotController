@@ -27,8 +27,8 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 public class AutonBlueHive extends NextOpMode {
 
     private static final int POLLEN_COUNT = 4;
-    private static final long GATE_OPEN_DELAY_MS = 500;
-    private static final long SHOT_MS = 600;
+    private static final long GATE_OPEN_DELAY_MS = 1000;
+    private static final long SHOT_MS = 1000;
     private static final long LED_ON_AFTER_PARK_MS = 3000;
 
     private final Robot robot;
@@ -39,7 +39,7 @@ public class AutonBlueHive extends NextOpMode {
     // Pedro coordinates are in inches.
     private final Pose startPose = poseFactory.of(84, 133, 270);
 
-    private final Pose shootPose = poseFactory.of(84, 130, 270);
+    private final Pose shootPose = poseFactory.of(84, 132, 270);
 
     private final Pose controlPose = poseFactory.of(129, 102, 0);
 

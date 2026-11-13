@@ -67,6 +67,7 @@ public class TeleOp_VT extends NextOpMode {
         gp2.y().onFalse(robot.gate.stop());
         gp2.y().onTrue(instant(() -> { yellowHeld = true; }));
         gp2.y().onFalse(instant(() -> { yellowHeld = false; }));
+        gp2.leftBumper().onTrue(reverse());
 
         gp2.dpadUp().onTrue(robot.shooterDual.increasePower());
         gp2.dpadDown().onTrue(robot.shooterDual.decreasePower());
@@ -100,6 +101,14 @@ public class TeleOp_VT extends NextOpMode {
                 robot.shooterDual.reverse(),
                 robot.intake.reverse(),
                 robot.intakeServo.forward()
+        );
+    }
+
+    private Command reverse() {
+        return parallel(
+                robot.shooterDual.off(),
+                robot.intake.forward(),
+                robot.intakeServo.reverse()
         );
     }
         
