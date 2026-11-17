@@ -18,7 +18,7 @@ public class ShooterDual implements Mechanism {
     private double powerMultiplier = 0.50;
 
     private boolean rpmControl = true;
-    private double targetRpm = 2500;
+    private double targetRpm = 2450;
     private double integralError = 0;
 
     public enum ShooterState {

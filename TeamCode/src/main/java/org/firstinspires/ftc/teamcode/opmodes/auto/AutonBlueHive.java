@@ -28,7 +28,7 @@ public class AutonBlueHive extends NextOpMode {
 
     private static final int POLLEN_COUNT = 4;
     private static final long GATE_OPEN_DELAY_MS = 1000;
-    private static final long SHOT_MS = 1000;
+    private static final long SHOT_MS = 1500;
     private static final long LED_ON_AFTER_PARK_MS = 3000;
 
     private final Robot robot;
@@ -43,7 +43,9 @@ public class AutonBlueHive extends NextOpMode {
 
     private final Pose controlPose = poseFactory.of(129, 102, 0);
 
-    private final Pose endPose = poseFactory.of(126, 20, 90);
+    private final Pose defaultEndPose = poseFactory.of(126, 20, 90);
+    private final Pose alternateEndPose = poseFactory.of(126, 50, 90);
+    private Pose endPose = defaultEndPose;
 
     public AutonBlueHive(Robot robot) {
         super(robot);
@@ -84,6 +86,18 @@ public class AutonBlueHive extends NextOpMode {
                 waitMs(LED_ON_AFTER_PARK_MS),
                 robot.indicator.set(IndicatorLight.OFF)
         );
+    }
+
+    @Override
+    public void disabledPeriodic() {
+        if (gamepad1.right_bumper) {
+            endPose = alternateEndPose;
+        } else if (gamepad1.left_bumper) {
+            endPose = defaultEndPose;
+        }
+        telemetry.addData("End Pose", endPose == alternateEndPose ? "Alternate (126, 50, 90)" : "Default (126, 20, 90)");
+        telemetry.addData("Select", "LB: default, RB: alternate");
+        telemetry.update();
     }
 
     @Override
