@@ -14,12 +14,16 @@ public class ShooterDual implements Mechanism {
             "shootMotor1",
             Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_6000_COUNTS_PER_REV)
     );
+    private final NextMotor shootMotor2 = new NextMotor(
+            "shootMotor2",
+            Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_6000_COUNTS_PER_REV)
+    );
     private ShooterState shooterState = ShooterState.OFF;
     private double powerMultiplier = 0.50;
 
     private boolean rpmControl = true;
     private double targetRpm = 2450;
-    private double integralError = 0;
+    private final double[] integralError = new double[2];
 
     public enum ShooterState {
         FORWARD,
@@ -39,12 +43,18 @@ public class ShooterDual implements Mechanism {
 
     public ShooterDual() {
         shootMotor1.setDirection(NextMotor.Direction.REVERSE);
+        shootMotor2.setDirection(NextMotor.Direction.FORWARD);
+    }
+
+    private void resetIntegral() {
+        integralError[0] = 0;
+        integralError[1] = 0;
     }
 
     public Command setState(ShooterState shooterState) {
         return instant(() -> {
             this.shooterState = shooterState;
-            this.integralError = 0;
+            resetIntegral();
         });
     }
 
@@ -68,8 +78,16 @@ public class ShooterDual implements Mechanism {
         return shootMotor1.getEncoderVelocity().into(RotationsPerMinute);
     }
 
+    public double getRPM2(){
+        return shootMotor2.getEncoderVelocity().into(RotationsPerMinute);
+    }
+
     public double getPower1(){
         return shootMotor1.getThrottle();
+    }
+
+    public double getPower2(){
+        return shootMotor2.getThrottle();
     }
 
     public void setPowerMultiplier(double value) {
@@ -82,7 +100,7 @@ public class ShooterDual implements Mechanism {
 
     public void enableRpmControl() {
         this.rpmControl = true;
-        this.integralError = 0;
+        resetIntegral();
     }
 
     public void disableRpmControl() {
@@ -95,7 +113,7 @@ public class ShooterDual implements Mechanism {
 
     public void setTargetRpm(double rpm) {
         this.targetRpm = Math.abs(rpm);
-        this.integralError = 0;
+        resetIntegral();
     }
 
     public double getTargetRpm() {
@@ -104,7 +122,7 @@ public class ShooterDual implements Mechanism {
 
     public void setKp(double value) {
         this.kp = value;
-        this.integralError = 0;
+        resetIntegral();
     }
 
     public double getKp() {
@@ -113,7 +131,7 @@ public class ShooterDual implements Mechanism {
 
     public void setKi(double value) {
         this.ki = value;
-        this.integralError = 0;
+        resetIntegral();
     }
 
     public double getKi() {
@@ -136,10 +154,11 @@ public class ShooterDual implements Mechanism {
         return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.01));
     }
 
-    private double rpmThrottle() {
-        double error = targetRpm - Math.abs(getRPM1());
-        integralError = Math.max(-MAX_INTEGRAL, Math.min(MAX_INTEGRAL, integralError + error));
-        double throttle = KFF * targetRpm + kp * error + ki * integralError;
+    private double rpmThrottle(int motorIndex, double currentRpm) {
+        double error = targetRpm - Math.abs(currentRpm);
+        integralError[motorIndex] = Math.max(-MAX_INTEGRAL,
+                Math.min(MAX_INTEGRAL, integralError[motorIndex] + error));
+        double throttle = KFF * targetRpm + kp * error + ki * integralError[motorIndex];
         return Math.max(0.0, Math.min(1.0, throttle));
     }
 
@@ -147,13 +166,26 @@ public class ShooterDual implements Mechanism {
     public void periodic() {
         switch (shooterState) {
             case FORWARD:
-                shootMotor1.setThrottle(rpmControl ? rpmThrottle() : FORWARD_POWER * powerMultiplier);
+                if (rpmControl) {
+                    shootMotor1.setThrottle(rpmThrottle(0, getRPM1()));
+                    shootMotor2.setThrottle(rpmThrottle(1, getRPM2()));
+                } else {
+                    shootMotor1.setThrottle(FORWARD_POWER * powerMultiplier);
+                    shootMotor2.setThrottle(FORWARD_POWER * powerMultiplier);
+                }
                 break;
             case REVERSE:
-                shootMotor1.setThrottle(rpmControl ? -rpmThrottle() : REVERSE_POWER * powerMultiplier);
+                if (rpmControl) {
+                    shootMotor1.setThrottle(-rpmThrottle(0, getRPM1()));
+                    shootMotor2.setThrottle(-rpmThrottle(1, getRPM2()));
+                } else {
+                    shootMotor1.setThrottle(REVERSE_POWER * powerMultiplier);
+                    shootMotor2.setThrottle(REVERSE_POWER * powerMultiplier);
+                }
                 break;
             case OFF:
                 shootMotor1.setThrottle(OFF_POWER);
+                shootMotor2.setThrottle(OFF_POWER);
                 break;
         }
     }
