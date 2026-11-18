@@ -40,8 +40,10 @@ public class ShootingTuning extends NextOpMode {
     public void periodic() {
         telemetry.addData("Shooter State", robot.shooterDual.getState());
         telemetry.addData("Target RPM", String.format("%.0f", robot.shooterDual.getTargetRpm()));
-        telemetry.addData("Current RPM", String.format("%.0f", robot.shooterDual.getRPM1()));
-        telemetry.addData("Shooter Power", String.format("%.3f", robot.shooterDual.getPower1()));
+        telemetry.addData("Current RPM 1", String.format("%.0f", robot.shooterDual.getRPM1()));
+        telemetry.addData("Current RPM 2", String.format("%.0f", robot.shooterDual.getRPM2()));
+        telemetry.addData("Shooter Power 1", String.format("%.3f", robot.shooterDual.getPower1()));
+        telemetry.addData("Shooter Power 2", String.format("%.3f", robot.shooterDual.getPower2()));
         telemetry.addData("KP", String.format("%.6f", robot.shooterDual.getKp()));
         telemetry.addData("KI", String.format("%.7f", robot.shooterDual.getKi()));
         telemetry.addData("Controls", "A reverse shooter, D-pad Up/Down KP, Left/Right KI");
