@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.IndicatorLight;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.util.ShootingPoseLogger;
 
 import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
@@ -31,6 +32,9 @@ public class TeleOpShootingPose extends NextOpMode {
     private final Robot robot;
     private Follower follower;
     private boolean gamepad1Locked = false;
+    private ShootingPoseLogger poseLogger;
+    private int savedPoseCount = 0;
+    private Pose lastSavedPose;
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
@@ -85,6 +89,18 @@ public class TeleOpShootingPose extends NextOpMode {
             if (!gamepad1Locked) schedule(robot.flower.startSweep());
         }));
         gp1.b().onFalse(robot.flower.stopSweep());
+
+        // Shooter target RPM: X +100, Y -100
+        gp1.x().onTrue(robot.shooterDual.increaseTargetRpm());
+        gp1.y().onTrue(robot.shooterDual.decreaseTargetRpm());
+
+        // Save the current pose to a log file (for finding good shooting poses in practice)
+        poseLogger = new ShootingPoseLogger("TeleOpShootingPose");
+        gp1.a().onTrue(instant(() -> {
+            lastSavedPose = follower.pose();
+            poseLogger.log("pose", lastSavedPose);
+            savedPoseCount++;
+        }));
 
         // Controller 2: intake + shooter
         gp2.b().onTrue(off());
@@ -147,6 +163,12 @@ public class TeleOpShootingPose extends NextOpMode {
             telemetry.addData("Y", "%.2f", follower.pose().y());
             telemetry.addData("Heading", "%.1f", Math.toDegrees(follower.pose().heading()));
         }
+        telemetry.addData("Saved Poses", savedPoseCount);
+        if (lastSavedPose != null) {
+            telemetry.addData("Last Saved", "%.2f, %.2f, %.1f",
+                    lastSavedPose.x(), lastSavedPose.y(), Math.toDegrees(lastSavedPose.heading()));
+        }
+        telemetry.addData("Pose Log File", poseLogger != null ? poseLogger.filePath() : "n/a");
 
         telemetry.addData("Shooter State", robot.shooterDual.getState());
         telemetry.addData("Shooter RPM 1", String.format("%.0f", robot.shooterDual.getRPM1()));
@@ -161,5 +183,12 @@ public class TeleOpShootingPose extends NextOpMode {
         telemetry.addData("Intake Servo Power", robot.intakeServo.getPower());
         telemetry.addData("Gate Power", String.format("%.2f", robot.gate.getPower()));
         telemetry.update();
+    }
+
+    @Override
+    public void end() {
+        if (poseLogger != null) {
+            poseLogger.close();
+        }
     }
 }

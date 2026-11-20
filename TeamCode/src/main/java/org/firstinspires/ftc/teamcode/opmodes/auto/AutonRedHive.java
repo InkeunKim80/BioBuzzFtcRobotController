@@ -17,7 +17,6 @@ import dev.nextftc.robot.opmode.NextAutonomous;
 import dev.nextftc.robot.opmode.NextOpMode;
 
 import static com.pedropathing.api.Paths.curve;
-import static com.pedropathing.api.Paths.line;
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.sequential;
@@ -27,7 +26,7 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 public class AutonRedHive extends NextOpMode {
 
     private static final int POLLEN_COUNT = 4;
-    private static final long GATE_OPEN_DELAY_MS = 1000;
+    private static final long GATE_OPEN_DELAY_MS = 1500;
     private static final long SHOT_MS = 1500;
     private static final long LED_ON_AFTER_PARK_MS = 3000;
 
@@ -38,8 +37,6 @@ public class AutonRedHive extends NextOpMode {
 
     // Pedro coordinates are in inches.
     private final Pose startPose = poseFactory.of(59, 8, 90);
-
-    private final Pose shootPose = poseFactory.of(59, 9, 90);
 
     private final Pose controlPose = poseFactory.of(13, 54, 0);
 
@@ -58,17 +55,12 @@ public class AutonRedHive extends NextOpMode {
         follower.update();
     }
 
-    private Path firstPath() {
-        return line(startPose, shootPose).linear(startPose, shootPose);
-    }
-
-    private Path secondPath() {
-        return curve(shootPose, controlPose, endPose).linear(shootPose, endPose);
+    private Path endPath() {
+        return curve(startPose, controlPose, endPose).linear(startPose, endPose);
     }
 
     private Command autoRoutine() {
         return sequential(
-                follow(follower, firstPath()),
                 robot.indicator.set(IndicatorLight.YELLOW),
                 robot.shooterDual.reverse(),
                 robot.intakeServo.forward(),
@@ -81,7 +73,7 @@ public class AutonRedHive extends NextOpMode {
                 robot.gate.stop(),
                 robot.shooterDual.off(),
                 robot.indicator.set(IndicatorLight.OFF),
-                follow(follower, secondPath()),
+                follow(follower, endPath()),
                 robot.indicator.set(IndicatorLight.GREEN),
                 waitMs(LED_ON_AFTER_PARK_MS),
                 robot.indicator.set(IndicatorLight.OFF)

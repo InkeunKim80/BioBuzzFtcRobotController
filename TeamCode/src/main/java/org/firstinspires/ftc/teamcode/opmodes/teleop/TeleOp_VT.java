@@ -7,13 +7,17 @@ import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
+import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.mechanisms.IndicatorLight;
 import org.firstinspires.ftc.teamcode.mechanisms.ShooterDual;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import dev.nextftc.robot.drive.DriveCommands;
@@ -24,6 +28,7 @@ import dev.nextftc.robot.triggers.CommandGamepad;
 @NextTeleop(name = "TeleOp VT", group = "Competition")
 public class TeleOp_VT extends NextOpMode {
     private final Robot robot;
+    private Follower follower;
     private boolean yellowHeld = false;
     private double ledColor = IndicatorLight.OFF;
 
@@ -32,6 +37,22 @@ public class TeleOp_VT extends NextOpMode {
         this.robot = robot;
 
         Scheduler.reset();
+    }
+
+    @Override
+    public void disabledPeriodic() {
+        if (follower == null) {
+            follower = Constants.create(hardwareMap);
+            if (follower != null) {
+                Pose savedPose = PoseStorage.load();
+                if (savedPose != null) {
+                    follower.setPose(savedPose);
+                }
+                follower.update();
+            }
+        }
+        telemetry.addData("Follower", follower != null ? "Initialized" : "Not initialized");
+        telemetry.update();
     }
 
     @Override
@@ -57,6 +78,10 @@ public class TeleOp_VT extends NextOpMode {
         
         gp1.b().onTrue(robot.flower.startSweep());
         gp1.b().onFalse(robot.flower.stopSweep());
+
+        // Shooter target RPM: X +100, Y -100
+        gp1.x().onTrue(robot.shooterDual.increaseTargetRpm());
+        gp1.y().onTrue(robot.shooterDual.decreaseTargetRpm());
 
         // Controller 2: intake + shooter + slider
         gp2.b().onTrue(off());
@@ -122,6 +147,13 @@ public class TeleOp_VT extends NextOpMode {
         if (color != ledColor) {
             robot.indicator.setColor(color);
             ledColor = color;
+        }
+
+        if (follower != null) {
+            follower.update();
+            telemetry.addData("X", "%.2f", follower.pose().x());
+            telemetry.addData("Y", "%.2f", follower.pose().y());
+            telemetry.addData("Heading", "%.1f", Math.toDegrees(follower.pose().heading()));
         }
 
         telemetry.addData("Shooter State", robot.shooterDual.getState());

@@ -36,7 +36,9 @@ public class ShooterDual implements Mechanism {
     private static final double OFF_POWER = 0.0;
 
     // Feedforward: about 0.55 power at 2400 RPM
-    private static final double KFF = 0.5 / 1800.0;
+    private static final double FF_BASE_POWER = 0.5;
+    private static final double FF_RPM_OFFSET = 100.0;
+    private static final double RPM_STEP = 100.0;
     private double kp = 0.0009;
     private double ki = 0.0001;
     private static final double MAX_INTEGRAL = 3000.0;
@@ -120,6 +122,14 @@ public class ShooterDual implements Mechanism {
         return targetRpm;
     }
 
+    public Command increaseTargetRpm() {
+        return instant(() -> setTargetRpm(getTargetRpm() + RPM_STEP));
+    }
+
+    public Command decreaseTargetRpm() {
+        return instant(() -> setTargetRpm(Math.max(0.0, getTargetRpm() - RPM_STEP)));
+    }
+
     public void setKp(double value) {
         this.kp = value;
         resetIntegral();
@@ -158,7 +168,8 @@ public class ShooterDual implements Mechanism {
         double error = targetRpm - Math.abs(currentRpm);
         integralError[motorIndex] = Math.max(-MAX_INTEGRAL,
                 Math.min(MAX_INTEGRAL, integralError[motorIndex] + error));
-        double throttle = KFF * targetRpm + kp * error + ki * integralError[motorIndex];
+        double kff = FF_BASE_POWER / (targetRpm + FF_RPM_OFFSET);
+        double throttle = kff * targetRpm + kp * error + ki * integralError[motorIndex];
         return Math.max(0.0, Math.min(1.0, throttle));
     }
 
