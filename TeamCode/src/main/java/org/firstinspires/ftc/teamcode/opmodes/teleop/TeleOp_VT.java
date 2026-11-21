@@ -29,6 +29,7 @@ import dev.nextftc.robot.triggers.CommandGamepad;
 public class TeleOp_VT extends NextOpMode {
     private final Robot robot;
     private Follower follower;
+    private boolean flowerReady = false;
     private boolean yellowHeld = false;
     private double ledColor = IndicatorLight.OFF;
 
@@ -41,6 +42,10 @@ public class TeleOp_VT extends NextOpMode {
 
     @Override
     public void disabledPeriodic() {
+        if (!flowerReady) {
+            robot.flower.setServoAtOne(hardwareMap.get(Servo.class, "flowerServo"));
+            flowerReady = true;
+        }
         if (follower == null) {
             follower = Constants.create(hardwareMap);
             if (follower != null) {
@@ -63,7 +68,6 @@ public class TeleOp_VT extends NextOpMode {
 
         robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
         robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
-        robot.flower.setServo(hardwareMap.get(Servo.class, "flowerServo"));
         robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
         ledColor = IndicatorLight.OFF;
 
@@ -76,12 +80,12 @@ public class TeleOp_VT extends NextOpMode {
         );
         // Flower toggle on B
         
-        gp1.b().onTrue(robot.flower.startSweep());
-        gp1.b().onFalse(robot.flower.stopSweep());
+        gp1.x().onTrue(robot.flower.positionOne());
+        gp1.y().onTrue(robot.flower.positionZero());
 
-        // Shooter target RPM: X +100, Y -100
-        gp1.x().onTrue(robot.shooterDual.increaseTargetRpm());
-        gp1.y().onTrue(robot.shooterDual.decreaseTargetRpm());
+        // Shooter target RPM: gamepad2 dpad up +100, dpad down -100
+        gp2.dpadUp().onTrue(robot.shooterDual.increaseTargetRpm());
+        gp2.dpadDown().onTrue(robot.shooterDual.decreaseTargetRpm());
 
         // Controller 2: intake + shooter + slider
         gp2.b().onTrue(off());
@@ -93,9 +97,6 @@ public class TeleOp_VT extends NextOpMode {
         gp2.y().onTrue(instant(() -> { yellowHeld = true; }));
         gp2.y().onFalse(instant(() -> { yellowHeld = false; }));
         gp2.leftBumper().onTrue(reverse());
-
-        gp2.dpadUp().onTrue(robot.shooterDual.increasePower());
-        gp2.dpadDown().onTrue(robot.shooterDual.decreasePower());
 
         // Slider placeholder: hardware not yet installed
         // CommandGamepad gp2 slider controls (enable when Slider hardware is ready)
@@ -141,7 +142,6 @@ public class TeleOp_VT extends NextOpMode {
     @Override
     public void periodic() {
         boolean rpmDrop = robot.shooterDual.getState() != ShooterDual.ShooterState.OFF
-                && robot.shooterDual.isRpmControlEnabled()
                 && Math.abs(robot.shooterDual.getRPM1()) < robot.shooterDual.getTargetRpm() - 70;
         double color = yellowHeld ? IndicatorLight.YELLOW : (rpmDrop ? IndicatorLight.RED : IndicatorLight.OFF);
         if (color != ledColor) {
@@ -160,10 +160,8 @@ public class TeleOp_VT extends NextOpMode {
         telemetry.addData("Shooter RPM 1", String.format("%.0f", robot.shooterDual.getRPM1()));
         telemetry.addData("Shooter RPM 2", String.format("%.0f", robot.shooterDual.getRPM2()));
         telemetry.addData("Shooter Target RPM", String.format("%.0f", robot.shooterDual.getTargetRpm()));
-        telemetry.addData("RPM Control", robot.shooterDual.isRpmControlEnabled() ? "ON" : "OFF");
         telemetry.addData("Shooter Power 1", robot.shooterDual.getPower1());
         telemetry.addData("Shooter Power 2", robot.shooterDual.getPower2());
-        telemetry.addData("Power Multiplier", String.format("%.2f", robot.shooterDual.getPowerMultiplier()));
         telemetry.addData("Intake State", robot.intake.getState());
         telemetry.addData("Intake Power", robot.intake.getPower());
         telemetry.addData("Intake Servo Power", robot.intakeServo.getPower());

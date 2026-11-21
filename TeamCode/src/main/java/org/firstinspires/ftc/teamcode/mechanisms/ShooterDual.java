@@ -19,9 +19,7 @@ public class ShooterDual implements Mechanism {
             Degrees.of(360.0 / MotorConstants.GoBILDA.RPM_6000_COUNTS_PER_REV)
     );
     private ShooterState shooterState = ShooterState.OFF;
-    private double powerMultiplier = 0.40;
 
-    private boolean rpmControl = true;
     private double targetRpm = 1700;
     private final double[] integralError = new double[2];
 
@@ -31,8 +29,6 @@ public class ShooterDual implements Mechanism {
         OFF
     }
 
-    private static final double FORWARD_POWER = 1.0;
-    private static final double REVERSE_POWER = -1.0;
     private static final double OFF_POWER = 0.0;
 
     // Feedforward: about 0.55 power at 2400 RPM
@@ -92,27 +88,6 @@ public class ShooterDual implements Mechanism {
         return shootMotor2.getThrottle();
     }
 
-    public void setPowerMultiplier(double value) {
-        this.powerMultiplier = Math.max(0.1, Math.min(1.0, value));
-    }
-
-    public double getPowerMultiplier() {
-        return powerMultiplier;
-    }
-
-    public void enableRpmControl() {
-        this.rpmControl = true;
-        resetIntegral();
-    }
-
-    public void disableRpmControl() {
-        this.rpmControl = false;
-    }
-
-    public boolean isRpmControlEnabled() {
-        return rpmControl;
-    }
-
     public void setTargetRpm(double rpm) {
         this.targetRpm = Math.abs(rpm);
         resetIntegral();
@@ -148,22 +123,6 @@ public class ShooterDual implements Mechanism {
         return ki;
     }
 
-    public Command increasePower() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.01));
-    }
-
-    public Command decreasePower() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.01));
-    }
-
-    public Command adjustLeftBumper() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() - 0.01));
-    }
-
-    public Command adjustRightBumper() {
-        return instant(() -> setPowerMultiplier(getPowerMultiplier() + 0.01));
-    }
-
     private double rpmThrottle(int motorIndex, double currentRpm) {
         double error = targetRpm - Math.abs(currentRpm);
         integralError[motorIndex] = Math.max(-MAX_INTEGRAL,
@@ -177,22 +136,12 @@ public class ShooterDual implements Mechanism {
     public void periodic() {
         switch (shooterState) {
             case FORWARD:
-                if (rpmControl) {
-                    shootMotor1.setThrottle(rpmThrottle(0, getRPM1()));
-                    shootMotor2.setThrottle(rpmThrottle(1, getRPM2()));
-                } else {
-                    shootMotor1.setThrottle(FORWARD_POWER * powerMultiplier);
-                    shootMotor2.setThrottle(FORWARD_POWER * powerMultiplier);
-                }
+                shootMotor1.setThrottle(rpmThrottle(0, getRPM1()));
+                shootMotor2.setThrottle(rpmThrottle(1, getRPM2()));
                 break;
             case REVERSE:
-                if (rpmControl) {
-                    shootMotor1.setThrottle(-rpmThrottle(0, getRPM1()));
-                    shootMotor2.setThrottle(-rpmThrottle(1, getRPM2()));
-                } else {
-                    shootMotor1.setThrottle(REVERSE_POWER * powerMultiplier);
-                    shootMotor2.setThrottle(REVERSE_POWER * powerMultiplier);
-                }
+                shootMotor1.setThrottle(-rpmThrottle(0, getRPM1()));
+                shootMotor2.setThrottle(-rpmThrottle(1, getRPM2()));
                 break;
             case OFF:
                 shootMotor1.setThrottle(OFF_POWER);

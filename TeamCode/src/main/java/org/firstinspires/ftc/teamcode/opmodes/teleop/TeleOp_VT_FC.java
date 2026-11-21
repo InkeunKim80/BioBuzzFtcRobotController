@@ -61,8 +61,6 @@ public class TeleOp_VT_FC extends NextOpMode {
         gp1.b().onTrue(robot.shooterDual.off());
         gp1.x().onTrue(robot.shooterDual.reverse());
 
-        gp1.dpadUp().onTrue(robot.shooterDual.increasePower());
-        gp1.dpadDown().onTrue(robot.shooterDual.decreasePower());
 
         // Controller 2: intake + slider
         gp2.a().onTrue(robot.intake.forward());
@@ -85,7 +83,6 @@ public class TeleOp_VT_FC extends NextOpMode {
 
         telemetry.addData("Shooter State", robot.shooterDual.getState());
         telemetry.addData("Shooter RPM 1", robot.shooterDual.getRPM1());
-        telemetry.addData("Power Multiplier", "%.2f", robot.shooterDual.getPowerMultiplier());
         telemetry.addData("Intake State", robot.intake.getState());
         telemetry.update();
     }

@@ -64,6 +64,7 @@ public class AutonRedHiveFarTest extends NextOpMode {
     private boolean partnerTipDetected = false;
     private boolean tipDetectionTimedOut = false;
     private boolean forceParking = false;
+    private boolean flowerReady = false;
     private boolean parkingStarted = false;
 
     // =========================================================
@@ -89,7 +90,8 @@ public class AutonRedHiveFarTest extends NextOpMode {
         super(robot);
         this.robot = robot;
 
-        follower = Constants.create(hardwareMap).withLogger();
+        follower = Constants.create(hardwareMap)
+                .withLogger(log -> telemetry.addData("Follower", log.toString()));
         follower.setPose(startPose);
         follower.update();
     }
@@ -207,7 +209,9 @@ public class AutonRedHiveFarTest extends NextOpMode {
 
                 shoot(FIRST_GATE_OPEN_DELAY_MS),
 
+                robot.flower.positionZero(),
                 follow(follower, flowerPath()),
+                robot.flower.positionOne(),
                 follow(follower, returnToStartPath()),
 
                 shoot(LATER_GATE_OPEN_DELAY_MS)
@@ -216,6 +220,7 @@ public class AutonRedHiveFarTest extends NextOpMode {
 
     private Command autoRoutine() {
         return sequential(
+                robot.flower.positionOne(),
                 waitForPartnerTip(),
 
                 conditional(
@@ -261,6 +266,7 @@ public class AutonRedHiveFarTest extends NextOpMode {
         Path emergencyPath = emergencyParkPath();
 
         activeRoutine = sequential(
+                robot.flower.positionOne(),
                 robot.gate.stop(),
                 robot.shooterDual.off(),
                 robot.intakeServo.off(),
@@ -282,6 +288,11 @@ public class AutonRedHiveFarTest extends NextOpMode {
 
     @Override
     public void disabledPeriodic() {
+        if (!flowerReady) {
+            robot.flower.setServoAtOne(hardwareMap.get(Servo.class, "flowerServo"));
+            flowerReady = true;
+        }
+
         telemetry.addLine("=== PLAN B: DOWN HIVE ===");
         telemetry.addData("Start", "(60, 135, 270 deg)");
         telemetry.addData("Flower", "(48, 128, 90 deg)");
@@ -304,9 +315,9 @@ public class AutonRedHiveFarTest extends NextOpMode {
         forceParking = false;
         parkingStarted = false;
 
-        hardwareMap.get(CRServo.class, "gateServo");
-        hardwareMap.get(CRServo.class, "intakeServo");
-        hardwareMap.get(Servo.class, "rgbLight");
+        robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
+        robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
+        robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
 
         limelight = hardwareMap.get(
                 Limelight3A.class, "limelight"
@@ -347,11 +358,11 @@ public class AutonRedHiveFarTest extends NextOpMode {
                 Math.max(0.0, 30.0 - autoTimer.seconds())
         );
 
-        telemetry.addData("X", "%.2f", currentPose.getX());
-        telemetry.addData("Y", "%.2f", currentPose.getY());
+        telemetry.addData("X", "%.2f", currentPose.x());
+        telemetry.addData("Y", "%.2f", currentPose.y());
         telemetry.addData(
                 "Heading", "%.1f deg",
-                Math.toDegrees(currentPose.getHeading())
+                Math.toDegrees(currentPose.heading())
         );
 
         telemetry.addData("Partner TIP", partnerTipDetected);

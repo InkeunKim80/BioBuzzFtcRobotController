@@ -31,6 +31,7 @@ import dev.nextftc.robot.triggers.CommandGamepad;
 public class TeleOpShootingPose extends NextOpMode {
     private final Robot robot;
     private Follower follower;
+    private boolean flowerReady = false;
     private boolean gamepad1Locked = false;
     private ShootingPoseLogger poseLogger;
     private int savedPoseCount = 0;
@@ -51,6 +52,10 @@ public class TeleOpShootingPose extends NextOpMode {
 
     @Override
     public void disabledPeriodic() {
+        if (!flowerReady) {
+            robot.flower.setServoAtOne(hardwareMap.get(Servo.class, "flowerServo"));
+            flowerReady = true;
+        }
         if (follower == null) {
             follower = Constants.create(hardwareMap);
             if (follower != null) {
@@ -72,7 +77,6 @@ public class TeleOpShootingPose extends NextOpMode {
 
         robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
         robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
-        robot.flower.setServo(hardwareMap.get(Servo.class, "flowerServo"));
         robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
 
         // Controller 1: drive, shooting position correction, flower
@@ -85,14 +89,16 @@ public class TeleOpShootingPose extends NextOpMode {
             if (!gamepad1Locked) goTo(shootingPosition2);
         }));
 
-        gp1.b().onTrue(instant(() -> {
-            if (!gamepad1Locked) schedule(robot.flower.startSweep());
+        gp1.x().onTrue(instant(() -> {
+            if (!gamepad1Locked) schedule(robot.flower.positionOne());
         }));
-        gp1.b().onFalse(robot.flower.stopSweep());
+        gp1.y().onTrue(instant(() -> {
+            if (!gamepad1Locked) schedule(robot.flower.positionZero());
+        }));
 
-        // Shooter target RPM: X +100, Y -100
-        gp1.x().onTrue(robot.shooterDual.increaseTargetRpm());
-        gp1.y().onTrue(robot.shooterDual.decreaseTargetRpm());
+        // Shooter target RPM: gamepad2 dpad up +100, dpad down -100
+        gp2.dpadUp().onTrue(robot.shooterDual.increaseTargetRpm());
+        gp2.dpadDown().onTrue(robot.shooterDual.decreaseTargetRpm());
 
         // Save the current pose to a log file (for finding good shooting poses in practice)
         poseLogger = new ShootingPoseLogger("TeleOpShootingPose");
@@ -109,8 +115,6 @@ public class TeleOpShootingPose extends NextOpMode {
         gp2.y().onTrue(robot.gate.run());
         gp2.y().onFalse(robot.gate.stop());
 
-        gp2.dpadUp().onTrue(robot.shooterDual.increasePower());
-        gp2.dpadDown().onTrue(robot.shooterDual.decreasePower());
     }
 
     private void goTo(Pose target) {
@@ -174,10 +178,8 @@ public class TeleOpShootingPose extends NextOpMode {
         telemetry.addData("Shooter RPM 1", String.format("%.0f", robot.shooterDual.getRPM1()));
         telemetry.addData("Shooter RPM 2", String.format("%.0f", robot.shooterDual.getRPM2()));
         telemetry.addData("Shooter Target RPM", String.format("%.0f", robot.shooterDual.getTargetRpm()));
-        telemetry.addData("RPM Control", robot.shooterDual.isRpmControlEnabled() ? "ON" : "OFF");
         telemetry.addData("Shooter Power 1", robot.shooterDual.getPower1());
         telemetry.addData("Shooter Power 2", robot.shooterDual.getPower2());
-        telemetry.addData("Power Multiplier", String.format("%.2f", robot.shooterDual.getPowerMultiplier()));
         telemetry.addData("Intake State", robot.intake.getState());
         telemetry.addData("Intake Power", robot.intake.getPower());
         telemetry.addData("Intake Servo Power", robot.intakeServo.getPower());
