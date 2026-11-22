@@ -71,12 +71,12 @@ public class AutonBlueHive extends NextOpMode {
                 follow(follower, firstPath()),
                 robot.indicator.set(IndicatorLight.YELLOW),
                 robot.shooterDual.reverse(),
-                robot.intakeServo.forward(),
+                // robot.intakeServo.forward(),
                 robot.intake.reverse(),                
                 waitMs(GATE_OPEN_DELAY_MS),
                 robot.gate.run(),
                 waitMs(SHOT_MS * POLLEN_COUNT),
-                robot.intakeServo.off(),
+                // robot.intakeServo.off(),
                 robot.intake.off(),
                 robot.gate.stop(),
                 robot.shooterDual.off(),
@@ -103,7 +103,7 @@ public class AutonBlueHive extends NextOpMode {
     @Override
     public void start() {
         robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
-        robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
+        // robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
         robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
         schedule(autoRoutine());
     }

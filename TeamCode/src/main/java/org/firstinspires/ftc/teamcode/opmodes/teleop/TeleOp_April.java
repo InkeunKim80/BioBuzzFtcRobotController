@@ -63,7 +63,7 @@ public class TeleOp_April extends NextOpMode {
         CommandGamepad gp2 = new CommandGamepad(gamepad2);
 
         robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
-        robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
+        // robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
         robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
         ledColor = IndicatorLight.OFF;
 
@@ -105,7 +105,7 @@ public class TeleOp_April extends NextOpMode {
         return parallel(
                 robot.shooterDual.off(),
                 robot.intake.off(),
-                robot.intakeServo.off(),
+                // robot.intakeServo.off(),
                 robot.gate.stop()
         );
     }
@@ -114,24 +114,24 @@ public class TeleOp_April extends NextOpMode {
         return sequential(
                 robot.shooterDual.reverse(),
                 waitMs(500),
-                robot.intake.reverse(),
-                robot.intakeServo.forward()
+                robot.intake.reverse()
+                // robot.intakeServo.forward()
         );
     }
 
     private Command intakeon() {
         return sequential(
                 robot.shooterDual.reverse(),
-                robot.intake.reverse(),
-                robot.intakeServo.forward()
+                robot.intake.reverse()
+                // robot.intakeServo.forward()
         );
     }
 
     private Command reverse() {
         return parallel(
                 robot.shooterDual.off(),
-                robot.intake.forward(),
-                robot.intakeServo.reverse()
+                robot.intake.forward()
+                // robot.intakeServo.reverse()
         );
     }
 
@@ -185,7 +185,7 @@ public class TeleOp_April extends NextOpMode {
         telemetry.addData("Shooter Power 2", robot.shooterDual.getPower2());
         telemetry.addData("Intake State", robot.intake.getState());
         telemetry.addData("Intake Power", robot.intake.getPower());
-        telemetry.addData("Intake Servo Power", robot.intakeServo.getPower());
+        // telemetry.addData("Intake Servo Power", robot.intakeServo.getPower());
         telemetry.addData("Gate Position", String.format("%.2f", robot.gate.getPosition()));
         telemetry.update();
     }

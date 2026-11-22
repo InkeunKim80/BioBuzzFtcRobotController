@@ -204,7 +204,7 @@ public class AutonRedHiveFarTest extends NextOpMode {
                 waitMs(TIP_WAIT_AFTER_DETECTION_MS),
 
                 robot.shooterDual.reverse(),
-                robot.intakeServo.forward(),
+                // robot.intakeServo.forward(),
                 robot.intake.reverse(),
 
                 shoot(FIRST_GATE_OPEN_DELAY_MS),
@@ -234,7 +234,7 @@ public class AutonRedHiveFarTest extends NextOpMode {
                 follow(follower, parkPath()),
 
                 robot.shooterDual.off(),
-                robot.intakeServo.off(),
+                // robot.intakeServo.off(),
                 robot.intake.off(),
                 robot.gate.stop(),
 
@@ -269,7 +269,7 @@ public class AutonRedHiveFarTest extends NextOpMode {
                 robot.flower.positionOne(),
                 robot.gate.stop(),
                 robot.shooterDual.off(),
-                robot.intakeServo.off(),
+                // robot.intakeServo.off(),
                 robot.intake.off(),
 
                 robot.indicator.set(IndicatorLight.YELLOW),
@@ -316,7 +316,7 @@ public class AutonRedHiveFarTest extends NextOpMode {
         parkingStarted = false;
 
         robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
-        robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
+        // robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
         robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
 
         limelight = hardwareMap.get(

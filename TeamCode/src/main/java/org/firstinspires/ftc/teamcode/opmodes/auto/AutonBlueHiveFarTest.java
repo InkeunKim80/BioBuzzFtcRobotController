@@ -236,7 +236,7 @@ public class AutonBlueHiveFarTest extends NextOpMode {
 
                 // Start shooter and intake.
                 robot.shooterDual.reverse(),
-                robot.intakeServo.forward(),
+                // robot.intakeServo.forward(),
                 robot.intake.reverse(),
 
                 // First shooting: preload 4 POLLEN.
@@ -281,7 +281,7 @@ public class AutonBlueHiveFarTest extends NextOpMode {
                 // Stop mechanisms.
                 robot.gate.stop(),
                 robot.shooterDual.off(),
-                robot.intakeServo.off(),
+                // robot.intakeServo.off(),
                 robot.intake.off(),
 
                 // Parking indicator.
@@ -318,7 +318,7 @@ public class AutonBlueHiveFarTest extends NextOpMode {
                 // Stop all mechanisms.
                 robot.gate.stop(),
                 robot.shooterDual.off(),
-                robot.intakeServo.off(),
+                // robot.intakeServo.off(),
                 robot.intake.off(),
 
                 robot.indicator.set(IndicatorLight.YELLOW),
@@ -374,7 +374,7 @@ public class AutonBlueHiveFarTest extends NextOpMode {
         parkingStarted = false;
 
         robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
-        robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
+        // robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
         robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
 
         limelight = hardwareMap.get(
