@@ -99,7 +99,7 @@ public class AutonBlueHiveFar extends NextOpMode {
 
     @Override
     public void start() {
-        robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
+        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
         robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
         robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
         schedule(autoRoutine());

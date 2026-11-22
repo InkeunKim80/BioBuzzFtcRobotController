@@ -1,39 +1,32 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
 import com.pedropathing.ivy.Command;
-import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import dev.nextftc.robot.Mechanism;
 
 public class Gate implements Mechanism {
-    // Continuous servo power (flip sign if it spins the wrong way)
-    private static final double REVERSE_POWER = 1.0;
-    private static final double STOP_POWER = 0.0;
+    // Position servo: 0.0 .. 1.0
+    private static final double OPEN_POSITION = 1.0;
+    private static final double CLOSED_POSITION = 0.5;
 
-    private CRServo servo;
+    private Servo servo;
 
-    public void setServo(CRServo servo) {
+    public void setServo(Servo servo) {
         this.servo = servo;
-        servo.setPower(STOP_POWER);
+        servo.setPosition(CLOSED_POSITION);
     }
 
+    // run() = open the gate (shoot), stop() = close the gate.
     public Command run() {
-        return instant(() -> servo.setPower(REVERSE_POWER));
+        return instant(() -> servo.setPosition(OPEN_POSITION));
     }
 
     public Command stop() {
-        return instant(() -> servo.setPower(STOP_POWER));
+        return instant(() -> servo.setPosition(CLOSED_POSITION));
     }
 
-    public Command setPower(double power) {
-        return instant(() -> servo.setPower(clamp(power)));
-    }
-
-    private static double clamp(double power) {
-        return Math.max(-1.0, Math.min(1.0, power));
-    }
-
-    public double getPower() {
-        return servo != null ? servo.getPower() : STOP_POWER;
+    public double getPosition() {
+        return servo != null ? servo.getPosition() : CLOSED_POSITION;
     }
 }

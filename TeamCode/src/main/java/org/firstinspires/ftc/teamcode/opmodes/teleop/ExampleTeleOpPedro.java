@@ -7,6 +7,7 @@ import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
@@ -66,7 +67,7 @@ public class ExampleTeleOpPedro extends NextOpMode {
                         .setEnd(end -> DriveCommands.setScalar(1.0))
         );
 
-        robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
+        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
 
         // Intake and shooter controls on gamepad2 (same buttons drive both)
         gp2.a().onTrue(robot.intake.forward());

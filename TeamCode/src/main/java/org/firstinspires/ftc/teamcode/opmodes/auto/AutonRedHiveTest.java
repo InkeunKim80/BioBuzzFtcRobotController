@@ -279,7 +279,7 @@ public class AutonRedHiveTest extends NextOpMode {
         forceParking = false;
         parkingStarted = false;
 
-        robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
+        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
         robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
         robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
 

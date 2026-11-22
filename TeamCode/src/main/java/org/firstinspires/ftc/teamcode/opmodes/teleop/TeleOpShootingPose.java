@@ -75,7 +75,7 @@ public class TeleOpShootingPose extends NextOpMode {
         CommandGamepad gp1 = new CommandGamepad(gamepad1);
         CommandGamepad gp2 = new CommandGamepad(gamepad2);
 
-        robot.gate.setServo(hardwareMap.get(CRServo.class, "gateServo"));
+        robot.gate.setServo(hardwareMap.get(Servo.class, "gateServo"));
         robot.intakeServo.setServo(hardwareMap.get(CRServo.class, "intakeServo"));
         robot.indicator.setServo(hardwareMap.get(Servo.class, "rgbLight"));
 
@@ -183,7 +183,7 @@ public class TeleOpShootingPose extends NextOpMode {
         telemetry.addData("Intake State", robot.intake.getState());
         telemetry.addData("Intake Power", robot.intake.getPower());
         telemetry.addData("Intake Servo Power", robot.intakeServo.getPower());
-        telemetry.addData("Gate Power", String.format("%.2f", robot.gate.getPower()));
+        telemetry.addData("Gate Position", String.format("%.2f", robot.gate.getPosition()));
         telemetry.update();
     }
 
