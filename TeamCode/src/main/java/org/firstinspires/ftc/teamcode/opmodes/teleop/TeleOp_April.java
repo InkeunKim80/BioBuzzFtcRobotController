@@ -114,7 +114,7 @@ public class TeleOp_April extends NextOpMode {
         return sequential(
                 robot.shooterDual.reverse(),
                 waitMs(500),
-                robot.intake.reverse()
+                robot.intake.reverse()
                 // robot.intakeServo.forward()
         );
     }
@@ -122,7 +122,7 @@ public class TeleOp_April extends NextOpMode {
     private Command intakeon() {
         return sequential(
                 robot.shooterDual.reverse(),
-                robot.intake.reverse()
+                robot.intake.reverse()
                 // robot.intakeServo.forward()
         );
     }
@@ -130,7 +130,7 @@ public class TeleOp_April extends NextOpMode {
     private Command reverse() {
         return parallel(
                 robot.shooterDual.off(),
-                robot.intake.forward()
+                robot.intake.forward()
                 // robot.intakeServo.reverse()
         );
     }
