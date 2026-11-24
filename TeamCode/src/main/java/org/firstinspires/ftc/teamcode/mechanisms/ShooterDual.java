@@ -20,7 +20,7 @@ public class ShooterDual implements Mechanism {
     );
     private ShooterState shooterState = ShooterState.OFF;
 
-    private double targetRpm = 1700;
+    private double targetRpm = 1650;
     private final double[] integralError = new double[2];
 
     public enum ShooterState {
