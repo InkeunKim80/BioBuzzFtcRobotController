@@ -96,9 +96,11 @@ public class TeleOpShootingPose extends NextOpMode {
             if (!gamepad1Locked) schedule(robot.flower.positionZero());
         }));
 
-        // Shooter target RPM: gamepad2 dpad up +100, dpad down -100
-        gp2.dpadUp().onTrue(robot.shooterDual.increaseTargetRpm());
-        gp2.dpadDown().onTrue(robot.shooterDual.decreaseTargetRpm());
+        // Shooter target RPM: gamepad1 dpad = motor 1, gamepad2 dpad = motor 2 (up +100, down -100)
+        gp1.dpadUp().onTrue(robot.shooterDual.increaseTargetRpm1());
+        gp1.dpadDown().onTrue(robot.shooterDual.decreaseTargetRpm1());
+        gp2.dpadUp().onTrue(robot.shooterDual.increaseTargetRpm2());
+        gp2.dpadDown().onTrue(robot.shooterDual.decreaseTargetRpm2());
 
         // Save the current pose to a log file (for finding good shooting poses in practice)
         poseLogger = new ShootingPoseLogger("TeleOpShootingPose");
@@ -146,7 +148,7 @@ public class TeleOpShootingPose extends NextOpMode {
         return sequential(
                 robot.shooterDual.reverse(),
                 waitMs(500),
-                robot.intake.reverse()
+                robot.intake.reverse()
                 // robot.intakeServo.forward()
         );
     }
@@ -154,7 +156,7 @@ public class TeleOpShootingPose extends NextOpMode {
     private Command intakeon() {
         return sequential(
                 robot.shooterDual.reverse(),
-                robot.intake.reverse()
+                robot.intake.reverse()
                 // robot.intakeServo.forward()
         );
     }
@@ -177,7 +179,8 @@ public class TeleOpShootingPose extends NextOpMode {
         telemetry.addData("Shooter State", robot.shooterDual.getState());
         telemetry.addData("Shooter RPM 1", String.format("%.0f", robot.shooterDual.getRPM1()));
         telemetry.addData("Shooter RPM 2", String.format("%.0f", robot.shooterDual.getRPM2()));
-        telemetry.addData("Shooter Target RPM", String.format("%.0f", robot.shooterDual.getTargetRpm()));
+        telemetry.addData("Shooter Target RPM 1", String.format("%.0f", robot.shooterDual.getTargetRpm1()));
+        telemetry.addData("Shooter Target RPM 2", String.format("%.0f", robot.shooterDual.getTargetRpm2()));
         telemetry.addData("Shooter Power 1", robot.shooterDual.getPower1());
         telemetry.addData("Shooter Power 2", robot.shooterDual.getPower2());
         telemetry.addData("Intake State", robot.intake.getState());

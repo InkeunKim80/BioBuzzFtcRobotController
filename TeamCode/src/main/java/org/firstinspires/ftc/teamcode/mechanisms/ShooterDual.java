@@ -20,7 +20,8 @@ public class ShooterDual implements Mechanism {
     );
     private ShooterState shooterState = ShooterState.OFF;
 
-    private double targetRpm = 1650;
+    // Target RPM per motor: index 0 = shootMotor1, index 1 = shootMotor2
+    private final double[] targetRpm = {1650, 1650};
     private final double[] integralError = new double[2];
 
     public enum ShooterState {
@@ -88,21 +89,66 @@ public class ShooterDual implements Mechanism {
         return shootMotor2.getThrottle();
     }
 
+    // Set both motors to the same target RPM.
     public void setTargetRpm(double rpm) {
-        this.targetRpm = Math.abs(rpm);
-        resetIntegral();
+        setTargetRpm1(rpm);
+        setTargetRpm2(rpm);
     }
 
+    public void setTargetRpm1(double rpm) {
+        targetRpm[0] = Math.abs(rpm);
+        integralError[0] = 0;
+    }
+
+    public void setTargetRpm2(double rpm) {
+        targetRpm[1] = Math.abs(rpm);
+        integralError[1] = 0;
+    }
+
+    // Target RPM of motor 1 (kept for existing callers such as LED / telemetry).
     public double getTargetRpm() {
-        return targetRpm;
+        return targetRpm[0];
     }
 
+    public double getTargetRpm1() {
+        return targetRpm[0];
+    }
+
+    public double getTargetRpm2() {
+        return targetRpm[1];
+    }
+
+    // Both motors
     public Command increaseTargetRpm() {
-        return instant(() -> setTargetRpm(getTargetRpm() + RPM_STEP));
+        return instant(() -> {
+            setTargetRpm1(getTargetRpm1() + RPM_STEP);
+            setTargetRpm2(getTargetRpm2() + RPM_STEP);
+        });
     }
 
     public Command decreaseTargetRpm() {
-        return instant(() -> setTargetRpm(Math.max(0.0, getTargetRpm() - RPM_STEP)));
+        return instant(() -> {
+            setTargetRpm1(Math.max(0.0, getTargetRpm1() - RPM_STEP));
+            setTargetRpm2(Math.max(0.0, getTargetRpm2() - RPM_STEP));
+        });
+    }
+
+    // Motor 1 only
+    public Command increaseTargetRpm1() {
+        return instant(() -> setTargetRpm1(getTargetRpm1() + RPM_STEP));
+    }
+
+    public Command decreaseTargetRpm1() {
+        return instant(() -> setTargetRpm1(Math.max(0.0, getTargetRpm1() - RPM_STEP)));
+    }
+
+    // Motor 2 only
+    public Command increaseTargetRpm2() {
+        return instant(() -> setTargetRpm2(getTargetRpm2() + RPM_STEP));
+    }
+
+    public Command decreaseTargetRpm2() {
+        return instant(() -> setTargetRpm2(Math.max(0.0, getTargetRpm2() - RPM_STEP)));
     }
 
     public void setKp(double value) {
@@ -124,11 +170,12 @@ public class ShooterDual implements Mechanism {
     }
 
     private double rpmThrottle(int motorIndex, double currentRpm) {
-        double error = targetRpm - Math.abs(currentRpm);
+        double target = targetRpm[motorIndex];
+        double error = target - Math.abs(currentRpm);
         integralError[motorIndex] = Math.max(-MAX_INTEGRAL,
                 Math.min(MAX_INTEGRAL, integralError[motorIndex] + error));
-        double kff = FF_BASE_POWER / (targetRpm + FF_RPM_OFFSET);
-        double throttle = kff * targetRpm + kp * error + ki * integralError[motorIndex];
+        double kff = FF_BASE_POWER / (target + FF_RPM_OFFSET);
+        double throttle = kff * target + kp * error + ki * integralError[motorIndex];
         return Math.max(0.0, Math.min(1.0, throttle));
     }
 
