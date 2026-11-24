@@ -243,11 +243,11 @@ public class AutonBlueHiveFarTest extends NextOpMode {
                 shoot(FIRST_GATE_OPEN_DELAY_MS),
 
                 // Move to FLOWER and collect.
-                robot.flower.positionZero(),
+                robot.flower.down(),
                 follow(follower, flowerPath()),
 
                 // Return to shooting position.
-                robot.flower.positionOne(),
+                robot.flower.up(),
                 follow(follower, returnToStartPath()),
 
                 // Second shooting without TIP check.
@@ -261,7 +261,7 @@ public class AutonBlueHiveFarTest extends NextOpMode {
 
     private Command autoRoutine() {
         return sequential(
-                robot.flower.positionOne(),
+                robot.flower.up(),
 
                 // Wait until partner TIP is detected.
                 waitForPartnerTip(),
@@ -313,7 +313,7 @@ public class AutonBlueHiveFarTest extends NextOpMode {
         Path emergencyPath = emergencyParkPath();
 
         activeRoutine = sequential(
-                robot.flower.positionOne(),
+                robot.flower.up(),
 
                 // Stop all mechanisms.
                 robot.gate.stop(),
@@ -339,7 +339,7 @@ public class AutonBlueHiveFarTest extends NextOpMode {
     @Override
     public void disabledPeriodic() {
         if (!flowerReady) {
-            robot.flower.setServoAtOne(hardwareMap.get(Servo.class, "flowerServo"));
+            robot.flower.setServo(hardwareMap.get(Servo.class, "flowerServo"));
             flowerReady = true;
         }
 

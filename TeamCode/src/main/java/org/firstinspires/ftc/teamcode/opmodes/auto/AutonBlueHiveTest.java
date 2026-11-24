@@ -206,7 +206,7 @@ public class AutonBlueHiveTest extends NextOpMode {
 
     private Command autoRoutine() {
         return sequential(
-                robot.flower.positionOne(),
+                robot.flower.up(),
 
                 // Start shooter and intake.
                 robot.shooterDual.reverse(),
@@ -217,11 +217,11 @@ public class AutonBlueHiveTest extends NextOpMode {
                 shoot(FIRST_GATE_OPEN_DELAY_MS),
 
                 // Move to FLOWER and collect.
-                robot.flower.positionZero(),
+                robot.flower.down(),
                 follow(follower, flowerPath()),
 
                 // Return to shooting position.
-                robot.flower.positionOne(),
+                robot.flower.up(),
                 follow(follower, returnToStartPath()),
 
                 // Check whether HIVE was tipped.
@@ -272,7 +272,7 @@ public class AutonBlueHiveTest extends NextOpMode {
         Path emergencyPath = emergencyParkPath();
 
         activeRoutine = sequential(
-                robot.flower.positionOne(),
+                robot.flower.up(),
 
                 // Stop mechanisms immediately.
                 robot.gate.stop(),
@@ -298,7 +298,7 @@ public class AutonBlueHiveTest extends NextOpMode {
     @Override
     public void disabledPeriodic() {
         if (!flowerReady) {
-            robot.flower.setServoAtOne(hardwareMap.get(Servo.class, "flowerServo"));
+            robot.flower.setServo(hardwareMap.get(Servo.class, "flowerServo"));
             flowerReady = true;
         }
 

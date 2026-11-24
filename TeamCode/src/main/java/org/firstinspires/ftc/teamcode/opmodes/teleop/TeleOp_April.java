@@ -52,7 +52,7 @@ public class TeleOp_April extends NextOpMode {
     @Override
     public void disabledPeriodic() {
         if (!flowerReady) {
-            robot.flower.setServoAtOne(hardwareMap.get(Servo.class, "flowerServo"));
+            robot.flower.setServo(hardwareMap.get(Servo.class, "flowerServo"));
             flowerReady = true;
         }
     }
@@ -75,8 +75,8 @@ public class TeleOp_April extends NextOpMode {
                         .setEnd(end -> DriveCommands.setScalar(1.0))
         );
 
-        gp1.x().onTrue(robot.flower.positionOne());
-        gp1.y().onTrue(robot.flower.positionZero());
+        gp1.x().onTrue(robot.flower.down());
+        gp1.y().onTrue(robot.flower.up());
 
         // Shooter target RPM: gamepad1 dpad = motor 1, gamepad2 dpad = motor 2 (up +100, down -100)
         gp1.dpadUp().onTrue(robot.shooterDual.increaseTargetRpm1());

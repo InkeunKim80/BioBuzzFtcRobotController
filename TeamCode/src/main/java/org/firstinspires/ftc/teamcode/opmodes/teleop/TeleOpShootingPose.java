@@ -53,7 +53,7 @@ public class TeleOpShootingPose extends NextOpMode {
     @Override
     public void disabledPeriodic() {
         if (!flowerReady) {
-            robot.flower.setServoAtOne(hardwareMap.get(Servo.class, "flowerServo"));
+            robot.flower.setServo(hardwareMap.get(Servo.class, "flowerServo"));
             flowerReady = true;
         }
         if (follower == null) {
@@ -90,10 +90,10 @@ public class TeleOpShootingPose extends NextOpMode {
         }));
 
         gp1.x().onTrue(instant(() -> {
-            if (!gamepad1Locked) schedule(robot.flower.positionOne());
+            if (!gamepad1Locked) schedule(robot.flower.down());
         }));
         gp1.y().onTrue(instant(() -> {
-            if (!gamepad1Locked) schedule(robot.flower.positionZero());
+            if (!gamepad1Locked) schedule(robot.flower.up());
         }));
 
         // Shooter target RPM: gamepad1 dpad = motor 1, gamepad2 dpad = motor 2 (up +100, down -100)

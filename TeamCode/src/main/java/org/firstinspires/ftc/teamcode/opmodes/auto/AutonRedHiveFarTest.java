@@ -209,9 +209,9 @@ public class AutonRedHiveFarTest extends NextOpMode {
 
                 shoot(FIRST_GATE_OPEN_DELAY_MS),
 
-                robot.flower.positionZero(),
+                robot.flower.down(),
                 follow(follower, flowerPath()),
-                robot.flower.positionOne(),
+                robot.flower.up(),
                 follow(follower, returnToStartPath()),
 
                 shoot(LATER_GATE_OPEN_DELAY_MS)
@@ -220,7 +220,7 @@ public class AutonRedHiveFarTest extends NextOpMode {
 
     private Command autoRoutine() {
         return sequential(
-                robot.flower.positionOne(),
+                robot.flower.up(),
                 waitForPartnerTip(),
 
                 conditional(
@@ -266,7 +266,7 @@ public class AutonRedHiveFarTest extends NextOpMode {
         Path emergencyPath = emergencyParkPath();
 
         activeRoutine = sequential(
-                robot.flower.positionOne(),
+                robot.flower.up(),
                 robot.gate.stop(),
                 robot.shooterDual.off(),
                 // robot.intakeServo.off(),
@@ -289,7 +289,7 @@ public class AutonRedHiveFarTest extends NextOpMode {
     @Override
     public void disabledPeriodic() {
         if (!flowerReady) {
-            robot.flower.setServoAtOne(hardwareMap.get(Servo.class, "flowerServo"));
+            robot.flower.setServo(hardwareMap.get(Servo.class, "flowerServo"));
             flowerReady = true;
         }
 
