@@ -190,8 +190,10 @@ public class AutonRedHiveTest extends NextOpMode {
 
                 robot.flower.down(),
                 follow(follower, flowerPath()),
-                robot.flower.up(),
+                waitMs(3000),
                 follow(follower, returnToStartPath()),
+                robot.flower.up(),
+
 
                 checkTip(),
                 shootIfTipFailed(),

@@ -8,7 +8,7 @@ import dev.nextftc.robot.Mechanism;
 public class Gate implements Mechanism {
     // Position servo: 0.0 .. 1.0
     private static final double OPEN_POSITION = 1.0;
-    private static final double CLOSED_POSITION = 0.5;
+    private static final double CLOSED_POSITION = 0.6;
 
     private Servo servo;
 

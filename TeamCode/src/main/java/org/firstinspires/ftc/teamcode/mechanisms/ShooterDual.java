@@ -21,7 +21,7 @@ public class ShooterDual implements Mechanism {
     private ShooterState shooterState = ShooterState.OFF;
 
     // Target RPM per motor: index 0 = shootMotor1, index 1 = shootMotor2
-    private final double[] targetRpm = {1650, 1650};
+    private final double[] targetRpm = {1650, 1750};
     private final double[] integralError = new double[2];
 
     public enum ShooterState {
