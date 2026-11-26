@@ -242,15 +242,15 @@ public class ShooterDual implements Mechanism {
     private static final double OFF_POWER = 0.0;
     private static final double RPM_STEP = 100.0;
 
-    // Feedforward: power = kS + kV * targetRpm
-    // Measure both with open-loop tests (fixed throttle -> steady-state rpm, linear fit).
-    // Placeholder values: roughly 0.55 power at 2400 RPM.
-    private double kS = 0.05;
-    private double kV = 0.0002;   // power per RPM
+    // Feedforward per motor: power = kS[i] + kV[i] * targetRpm[i]
+    // Measured with MotorTest (open-loop sweep, linear fit).
+    // index 0 = shootMotor1, index 1 = shootMotor2
+    private final double[] kS = {0.0909, 0.0803};
+    private final double[] kV = {0.000152, 0.000156};   // power per RPM
 
-    // Feedback (PI) on RPM error
-    private double kp = 0.0005;   // power per RPM
-    private double ki = 0.0008;   // power per (RPM * second)
+    // Feedback (PI) on RPM error (shared by both motors)
+    private double kp = 0.0003;   // power per RPM
+    private double ki = 0.0005;   // power per (RPM * second)
 
     // Integrate only when |error| is within this band (prevents windup during spin-up)
     private static final double I_ZONE_RPM = 300.0;
@@ -405,20 +405,48 @@ public class ShooterDual implements Mechanism {
         return ki;
     }
 
-    public void setKs(double value) {
-        this.kS = value;
+    // Per-motor feedforward constants
+    public void setKs1(double value) {
+        kS[0] = value;
     }
 
-    public double getKs() {
-        return kS;
+    public void setKs2(double value) {
+        kS[1] = value;
+    }
+
+    public void setKv1(double value) {
+        kV[0] = value;
+    }
+
+    public void setKv2(double value) {
+        kV[1] = value;
+    }
+
+    public double getKs1() {
+        return kS[0];
+    }
+
+    public double getKs2() {
+        return kS[1];
+    }
+
+    public double getKv1() {
+        return kV[0];
+    }
+
+    public double getKv2() {
+        return kV[1];
+    }
+
+    // Set the same kS / kV on both motors
+    public void setKs(double value) {
+        kS[0] = value;
+        kS[1] = value;
     }
 
     public void setKv(double value) {
-        this.kV = value;
-    }
-
-    public double getKv() {
-        return kV;
+        kV[0] = value;
+        kV[1] = value;
     }
 
     private void updateFilteredRpm() {
@@ -442,7 +470,7 @@ public class ShooterDual implements Mechanism {
                     -MAX_I_POWER, MAX_I_POWER);
         }
 
-        double feedforward = kS + kV * target;
+        double feedforward = kS[motorIndex] + kV[motorIndex] * target;
         double throttle = feedforward + kp * error + integralPower[motorIndex];
         return clamp(throttle, 0.0, 1.0);
     }
