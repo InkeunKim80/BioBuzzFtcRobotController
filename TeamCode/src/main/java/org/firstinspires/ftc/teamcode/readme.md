@@ -412,59 +412,6 @@ Control Hub Motor Ports (4-7): Other Systems
 
 ---
 
-### SliderTest - Slider Arm Position Control (PID)
-
-| Control | Action |
-|---------|--------|
-| **Gamepad 2 - A Button (Press Once)** | **Extend to Position 2000** (자동 이동 후 유지) |
-| **Gamepad 2 - X Button (Press Once)** | **Return to Start (Position 0)** (자동 복귀) |
-
-**특징**:
-- ✅ 버튼 한 번 누르면 자동으로 목표 위치까지 이동
-- ✅ 도달 후 **PID 제어로 위치 자동 유지**
-- ✅ 버튼을 계속 누르고 있을 필요 없음
-- ✅ 중력이나 외부 힘에 저항하며 위치 유지
-
-**Telemetry Display**:
-- Current Position (현재 위치)
-- Target Position (목표 위치)
-- Position Difference (차이)
-- At Target (목표 도달 여부)
-- Slider RPM
-- Slider Power (모터 전력)
-
-**Motor**: sliderMotor (Port 7, ??? RPM)  
-**제어 방식**: PID (P=0.01, I=0.001, D=0.005)  
-**Use Case**: 정확한 위치 제어 및 자동 유지
-
----
-
-### ScoopTest - Scoop Servo Testing
-
-**Location**: `org.firstinspires.ftc.teamcode.opmodes.teleop.ScoopTest`
-
-**Purpose**: Tests the scoop servo mechanism independently to verify smooth motion and state control.
-
-| Control | Action |
-|---------|--------|
-| **Gamepad 2 - A Button** | Open Scoop (Position 1.0) |
-| **Gamepad 2 - B Button** | Close Scoop (Position 0.0) |
-| **Gamepad 2 - Y Button** | Toggle Scoop (Switch between open and closed) |
-
-**Telemetry Display**:
-- **Scoop State**: Current state (OPEN or CLOSED)
-- **Scoop Position**: Current servo position value (0.0 to 1.0)
-
-**Servo Configuration**:
-- Servo Name: `scoopServo`
-- Servo Port: 1
-- Position 0.0: Closed (for ball collection and retention)
-- Position 1.0: Open (for ball delivery and discharge)
-
-**Use Case**: Manual scoop control for ball collection and discharge. Use this mode to verify that the scoop servo moves smoothly between open and closed positions and responds to control inputs.
-
----
-
 ### LimeLightTest - LimeLight Camera Testing
 
 | Control | Action |
